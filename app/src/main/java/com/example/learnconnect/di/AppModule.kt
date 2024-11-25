@@ -1,6 +1,8 @@
 package com.example.learnconnect.di
 
+import android.app.Application
 import androidx.lifecycle.ViewModel
+import androidx.room.Room
 import com.example.learnconnect.configs.AppDatabase
 import com.example.learnconnect.dao.UserDao
 import com.example.learnconnect.repositories.UserRepository
@@ -9,15 +11,29 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
     @Provides
-    fun provideUserDao(database: AppDatabase):UserDao=database.userDao()
+    @Singleton
+    fun provideAppDatabase(app: Application): AppDatabase {
+        return Room.databaseBuilder(app, AppDatabase::class.java, "app_database")
+            .fallbackToDestructiveMigration() // Veritabanı versiyon değişikliğinde veri kaybı olmasını sağlar
+            .build()
+    }
+
     @Provides
-    fun provideUserRepository(userDao: UserDao):UserRepository= UserRepository(userDao)
+    @Singleton
+    fun provideUserDao(database: AppDatabase): UserDao {
+        return database.userDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideUserRepository(userDao: UserDao): UserRepository {
+        return UserRepository(userDao)
+    }
 }
-class LoginViewModel @Inject constructor(
-    private val userRepository: UserRepository
-): ViewModel()
+
