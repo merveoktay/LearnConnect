@@ -2,12 +2,16 @@ package com.example.learnconnect.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,9 +23,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.learnconnect.R
+import com.example.learnconnect.ViewModels.LoginState
+import com.example.learnconnect.ViewModels.LoginViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(viewModel: LoginViewModel) {
+    val loginState by viewModel.loginState.observeAsState()
+    var email by remember{mutableStateOf("")}
+    var password by remember { mutableStateOf("")   }
+    var  buttonColor= colorResource(id = R.color.hint_color)
+    var clickable=false
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -58,8 +70,8 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = email,
+                onValueChange = {email=it},
                 label = { Text("Email", color = colorResource(id = R.color.hint_color)) },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -70,8 +82,8 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = password,
+                onValueChange = {password=it},
                 label = { Text("Password", color = colorResource(id = R.color.hint_color)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
@@ -97,14 +109,21 @@ fun LoginScreen() {
             }
 
             Spacer(modifier = Modifier.height(50.dp))
-
+            if(email!=null && password!=null) {
+                buttonColor= colorResource(id = R.color.brand_color)
+                clickable=true
+            }
+            else{
+                buttonColor= colorResource(id = R.color.hint_color)
+                clickable=false
+            }
             Button(
-                onClick = { /* Giriş işlemi */ },
+                onClick = { if(clickable){}},
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
             ) {
                 Text(
                     text = "LOGIN",
@@ -120,15 +139,21 @@ fun LoginScreen() {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Don't have an account? ", color = Color(0xFF888888))
+                Text(text = "Don't have an account? ", color = colorResource(id = R.color.title_color))
                 Text(
                     text = "Register Now",
                     style = TextStyle(
-                        color = Color(0xFFE53935),
+                        color = colorResource(id = R.color.brand_color),
                         fontWeight = FontWeight.Bold
                     )
                 )
             }
+        }
+        when(loginState){
+            is LoginState.Loading-> CircularProgressIndicator()
+            is LoginState.Success-> Text(text = "Login Successful",color= Color.Green)
+            is LoginState.Error-> Text(text = (loginState as LoginState.Error).message, color = Color.Red)
+            else ->{}
         }
     }
 }
@@ -136,5 +161,5 @@ fun LoginScreen() {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview() {
-    LoginScreen()
+   // LoginScreen()
 }
