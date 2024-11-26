@@ -2,12 +2,15 @@ package com.example.learnconnect.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -15,13 +18,26 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.learnconnect.R
+import com.example.learnconnect.ViewModels.LoginViewModel
 
 @Composable
-fun LoginScreen() {
+fun LoginScreen(
+    onNavigateToRegister: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    viewModel: LoginViewModel= hiltViewModel()
+) {
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var buttonColor = colorResource(id = R.color.hint_color)
+    var clickable = false
+    var isPasswordVisible by remember { mutableStateOf(false) }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -37,11 +53,11 @@ fun LoginScreen() {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
-                Image(
-                    painter = painterResource(id = R.drawable.brand_logo_light_small), // Logonuzun kaynak dosyası
-                    contentDescription = "Logo",
-                    modifier = Modifier.size(60.dp)
-                )
+            Image(
+                painter = painterResource(id = R.drawable.brand_logo_light_small), // Logonuzun kaynak dosyası
+                contentDescription = "Logo",
+                modifier = Modifier.size(60.dp)
+            )
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -58,8 +74,10 @@ fun LoginScreen() {
             Spacer(modifier = Modifier.height(32.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = email,
+                onValueChange = { newEmail ->
+                    email = newEmail
+                    viewModel.onEmailChange(newEmail)},
                 label = { Text("Email", color = colorResource(id = R.color.hint_color)) },
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -67,15 +85,28 @@ fun LoginScreen() {
                 shape = RoundedCornerShape(8.dp),
             )
 
+
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
-                value = "",
-                onValueChange = {},
+                value = password,
+                onValueChange = {newPassword ->
+                    password = newPassword
+                    viewModel.onPasswordChange(newPassword)},
                 label = { Text("Password", color = colorResource(id = R.color.hint_color)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
+                visualTransformation =  if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(
+                        onClick = { isPasswordVisible = !isPasswordVisible }  // Tıklandığında şifreyi göster/gizle
+                    ) {
+                        Icon(painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
+                            contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
+                        )
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -97,14 +128,27 @@ fun LoginScreen() {
             }
 
             Spacer(modifier = Modifier.height(50.dp))
-
+            if (email.isNotEmpty()  && password.isNotEmpty() ) {
+                buttonColor = colorResource(id = R.color.brand_color)
+                clickable = true
+            } else {
+                buttonColor = colorResource(id = R.color.hint_color)
+                clickable = false
+            }
             Button(
-                onClick = { /* Giriş işlemi */ },
+                onClick = {
+                    if (clickable) {
+                        viewModel.login(
+                            onSuccess = { onNavigateToHome() },
+                            onError = { errorMessage -> println(errorMessage) }
+                        )
+                    }
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color.Gray)
+                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
             ) {
                 Text(
                     text = "LOGIN",
@@ -120,21 +164,22 @@ fun LoginScreen() {
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Don't have an account? ", color = Color(0xFF888888))
                 Text(
-                    text = "Register Now",
-                    style = TextStyle(
-                        color = Color(0xFFE53935),
-                        fontWeight = FontWeight.Bold
-                    )
+                    text = "Don't have an account? ",
+                    color = colorResource(id = R.color.title_color)
                 )
+                TextButton(onClick = {onNavigateToRegister() }) {
+                    Text(
+                        text = "Register Now",
+                        style = TextStyle(
+                            color = colorResource(id = R.color.brand_color),
+                            fontWeight = FontWeight.Bold
+                        )
+                    )
+                }
             }
         }
+
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    LoginScreen()
-}

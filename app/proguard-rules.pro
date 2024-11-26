@@ -18,4 +18,10 @@
 
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
-#-renamesourcefileattribute SourceFile
+#-renamesourcefi# Room specific rules
+                #-keepclassmembers class androidx.room.RoomDatabase {
+                #    ** DATABASE_INSTANCE;
+                #}
+                #-keepclassmembers class * {
+                #    @androidx.room.* <methods>;
+                #}leattribute SourceFile
