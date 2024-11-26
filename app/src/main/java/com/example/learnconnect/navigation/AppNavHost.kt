@@ -18,6 +18,7 @@ fun AppNavHost(){
         navController = navController,
         startDestination = "login"
     ) {
+
         composable("login") {
             val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
