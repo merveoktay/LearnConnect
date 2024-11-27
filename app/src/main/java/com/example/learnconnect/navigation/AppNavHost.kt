@@ -11,16 +11,15 @@ import com.example.learnconnect.ui.LoginScreen
 import com.example.learnconnect.ui.RegisterScreen
 
 @Composable
-fun AppNavHost(){
+fun AppNavHost() {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
         startDestination = "login"
     ) {
-
         composable("login") {
-            val loginViewModel: LoginViewModel = hiltViewModel()
+            val loginViewModel: LoginViewModel = hiltViewModel() // Hilt ile ViewModel'ı al
             LoginScreen(
                 viewModel = loginViewModel,
                 onNavigateToRegister = { navController.navigate("register") },
@@ -28,7 +27,7 @@ fun AppNavHost(){
             )
         }
         composable("register") {
-            val registerViewModel: RegisterViewModel = hiltViewModel()
+            val registerViewModel: RegisterViewModel = hiltViewModel() // Hilt ile ViewModel'ı al
             RegisterScreen(
                 viewModel = registerViewModel,
                 onNavigateToLogin = { navController.popBackStack() }

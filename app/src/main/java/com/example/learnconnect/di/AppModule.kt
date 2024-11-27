@@ -1,7 +1,6 @@
 package com.example.learnconnect.di
 
 import android.app.Application
-import androidx.lifecycle.ViewModel
 import androidx.room.Room
 import com.example.learnconnect.configs.AppDatabase
 import com.example.learnconnect.dao.UserDao
@@ -10,7 +9,6 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Inject
 import javax.inject.Singleton
 
 @Module
@@ -20,7 +18,7 @@ object AppModule {
     @Singleton
     fun provideAppDatabase(app: Application): AppDatabase {
         return Room.databaseBuilder(app, AppDatabase::class.java, "app_database")
-            .fallbackToDestructiveMigration() // Veritabanı versiyon değişikliğinde veri kaybı olmasını sağlar
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -36,4 +34,3 @@ object AppModule {
         return UserRepository(userDao)
     }
 }
-

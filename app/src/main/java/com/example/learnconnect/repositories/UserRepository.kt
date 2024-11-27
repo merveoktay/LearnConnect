@@ -2,10 +2,11 @@ package com.example.learnconnect.repositories
 
 import com.example.learnconnect.dao.UserDao
 import com.example.learnconnect.models.User
+import javax.inject.Inject
 
-class UserRepository(val userDao: UserDao) {
+class UserRepository @Inject constructor(val userDao: UserDao) {
     suspend fun registerUser(username:String,email: String,password:String):Boolean{
-       val user=User(username=username,email=email, password = password)
+        val user= User(username=username,email=email, password = password)
         userDao.insertUser(user)
         return true
     }

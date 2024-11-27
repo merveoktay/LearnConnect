@@ -18,7 +18,7 @@ import javax.inject.Inject
     version = 1,
     exportSchema = false
 )
-abstract class AppDatabase :RoomDatabase(){
+abstract class AppDatabase : RoomDatabase(){
     abstract fun userDao(): UserDao
     abstract fun courseDao(): CourseDao
 
