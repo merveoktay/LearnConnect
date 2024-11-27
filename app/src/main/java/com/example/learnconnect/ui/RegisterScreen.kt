@@ -36,7 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.learnconnect.R
-import com.example.learnconnect.ViewModels.RegisterViewModel
+import com.example.learnconnect.viewModels.RegisterViewModel
 
 @Composable
 fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel = hiltViewModel()) {

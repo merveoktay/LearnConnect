@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.learnconnect.R
-import com.example.learnconnect.ViewModels.LoginViewModel
+import com.example.learnconnect.viewModels.LoginViewModel
 
 @Composable
 fun LoginScreen(

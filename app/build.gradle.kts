@@ -56,6 +56,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.androidx.runtime.livedata)
     val room_version = "2.6.1"
     kapt ("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:$room_version")
@@ -67,6 +68,9 @@ dependencies {
 
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.8.0")
     implementation ("androidx.room:room-runtime:2.6.1" )
+
+    implementation ("io.coil-kt:coil-compose:2.5.0")
+
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

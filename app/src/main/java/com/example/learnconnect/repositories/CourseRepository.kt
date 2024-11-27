@@ -1,20 +1,26 @@
 package com.example.learnconnect.repositories
 
-import com.example.learnconnect.dao.CourseDao
-import com.example.learnconnect.models.UserCourse
-import com.example.learnconnect.models.UserFavoriteCourse
+import com.example.learnconnect.initialize.CourseCategoryProvider
+import com.example.learnconnect.models.Course
+import com.example.learnconnect.models.CourseType
 import javax.inject.Inject
 
 class CourseRepository @Inject constructor(
-    private val courseDao: CourseDao  // courseDao burada inject ediliyor
+    private val courseCategoryProvider: CourseCategoryProvider  // Yeni Provider'ı Enjekte Et
 ) {
-    suspend fun enrollInCourse(userId: Int, courseId: Int) {
-        val userCourse = UserCourse(user_id = userId, course_id = courseId)
-        courseDao.insertUserCourse(userCourse)  // courseDao burada kullanılıyor
+    suspend fun initializeAllCategories() {
+        courseCategoryProvider.initializeCategories()
     }
-
-    suspend fun markCourseAsFavorite(userId: Int, courseId: Int) {
-        val userFavoriteCourse = UserFavoriteCourse(user_id = userId, course_id = courseId)
-        courseDao.insertUserFavoriteCourse(userFavoriteCourse)  // courseDao burada kullanılıyor
+    suspend fun initializeAllCourses() {
+        courseCategoryProvider.initializeCourses()
+    }
+    suspend fun getCategories(): List<CourseType> {
+        return courseCategoryProvider.getCategories()  // Kategorileri döndür
+    }
+    suspend fun getCourses(): List<Course> {
+        return courseCategoryProvider.getCourses()  // Kategorileri döndür
+    }
+    suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
+        return courseCategoryProvider.getCoursesByType(courseTypeId)
     }
 }

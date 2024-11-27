@@ -3,14 +3,18 @@ package com.example.learnconnect.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -24,81 +28,90 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.example.learnconnect.R
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
-fun HomeScreen() {
-    var isUserLoggedOut by remember { mutableStateOf(false) }
-    if (isUserLoggedOut) {
-        println("User logged out")
+fun HomeScreen(
+    onNavigateToProfile: () -> Unit,
+    onNavigateToVideo: () -> Unit, videoViewModel: VideoViewModel,
+) {
+    LaunchedEffect(Unit) {
+        videoViewModel.loadCategories()
+        videoViewModel.loadCourses()
     }
+    val searchQuery by videoViewModel.searchQuery.observeAsState("") // Arama sorgusunu ViewModel'den al
+
     Scaffold(
         topBar = {
-            HomeTopBar( onLogoutClick = {
-                // Çıkış işlemi burada yapılacak
-                isUserLoggedOut = true // Çıkış yapıldığında bu değeri true yapıyoruz
-            })
+            HomeTopBar()
         },
         bottomBar = {
-            HomeBottomBar()
+            HomeBottomBar(onNavigateToProfile)
         },
         content = { innerPadding ->
-            HomeContent(modifier = Modifier.padding(innerPadding))
+            HomeContent(
+                modifier = Modifier.padding(innerPadding), videoViewModel,
+                onNavigateToVideo
+            )
         }
     )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar(onLogoutClick: () -> Unit) {
+fun HomeTopBar() {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = colorResource(id = R.color.hint_color)),
+        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
-                    painter = painterResource(id = R.drawable.xsmall_brand_logo), // Logo ikonu
+                    painter = painterResource(id = R.drawable.xsmall_brand_logo),
                     contentDescription = "Logo",
                     modifier = Modifier.size(40.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = "LearnConnect",
-                    style = MaterialTheme.typography.titleLarge,
-                    color = colorResource(id = R.color.title_color)
-                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text(text = "LearnConnect", color = colorResource(id = R.color.title_color))
             }
         },
         actions = {
-            IconButton(onClick ={onLogoutClick}) {
-                Icon(
-                    painter = painterResource(id = R.drawable.logout_icon),
-                    contentDescription = "Menu",
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+
         }
     )
 }
 
 @Composable
-fun HomeContent(modifier: Modifier = Modifier) {
+fun HomeContent(
+    modifier: Modifier = Modifier,
+    videoViewModel: VideoViewModel,
+    onNavigateToVideo: () -> Unit,
+) {
+    var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
+    val categories by videoViewModel.categories.observeAsState(emptyList())
+    val courses by videoViewModel.courses.observeAsState(emptyList())
+
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -110,23 +123,26 @@ fun HomeContent(modifier: Modifier = Modifier) {
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            val categories = listOf("English", "Math", "Science", "History")
+
             items(categories) { category ->
                 Chip(
-                    text = category,
-                    onClick = {  }
+                    text = category.name,
+                    onClick = { selectedCategory = category.id }
                 )
             }
         }
-
-        // Video Kartları
+        val filteredCourses = selectedCategory?.let { categoryId ->
+            videoViewModel.getCoursesByCategory(categoryId)
+        } ?: courses
         LazyColumn(
+            modifier = Modifier
+                .fillMaxHeight(),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            items(3) {
+            items(filteredCourses) { course ->
                 VideoCard(
-                    imageRes = R.drawable.sample_image,
-                    courseName = "Video Name"
+                    imageUrl = course.course_image,
+                    courseName = course.name, onNavigateToVideo
                 )
             }
         }
@@ -134,7 +150,7 @@ fun HomeContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun HomeBottomBar() {
+fun HomeBottomBar(onNavigateToProfile: () -> Unit) {
     BottomAppBar(
         containerColor = colorResource(id = R.color.hint_color)
     ) {
@@ -173,7 +189,7 @@ fun HomeBottomBar() {
                     )
                 },
                 selected = false,
-                onClick = { }
+                onClick = { onNavigateToProfile() }
             )
         }
     }
@@ -184,64 +200,55 @@ fun Chip(text: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .clickable { onClick() }
-            .size(90.dp, 45.dp),
+            .wrapContentSize(), // Adjusts size based on the content (Text)
         color = Color.LightGray,
         shape = RoundedCornerShape(16.dp)
     ) {
-        Text(
-            text = text,
-            modifier = Modifier.padding(16.dp),
-            color = colorResource(id = R.color.title_color)
-        )
+        Box(
+            contentAlignment = Alignment.Center, // Center the content
+            modifier = Modifier.wrapContentSize() // Ensure the Box sizes based on the content
+        ) {
+            Text(
+                text = text,
+                modifier = Modifier.padding(16.dp),
+                color = colorResource(id = R.color.title_color)
+            )
+        }
     }
 }
 
 @Composable
-fun VideoCard(imageRes: Int, courseName: String) {
+fun VideoCard(imageUrl: String, courseName: String, onNavigateToVideo: () -> Unit) {
     Card(
         shape = RoundedCornerShape(25.dp),
-        elevation =  CardDefaults.cardElevation(
+        elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
-            ),
-        modifier = Modifier.fillMaxSize(1f)
+        ),
+        modifier = Modifier
+            .fillMaxSize(1f)
+            .clickable {
+                onNavigateToVideo() // Tıklama gerçekleştiğinde bu fonksiyon çağrılacak
+            }
     ) {
         Column {
-            Image(
-                painter = painterResource(id = imageRes),
+            AsyncImage(
+                model = imageUrl,  // Görsel URL'si
                 contentDescription = null,
-                modifier = Modifier.padding(top = 10.dp).size(400.dp,150.dp)
-            )
-            Text(
-                text = "Kurs Adı : $courseName",
-                modifier = Modifier.padding(start=20.dp,top=8.dp,bottom=8.dp,end=10.dp),
-                color = colorResource(id = R.color.body_text_color)
-            )
-        }
-    }
-}
-@Composable
-fun MenuScreen(onMenuItemClick: (String) -> Unit) {
-    val menuItems = listOf(
-        "Favorilerim",
-        "İndirilenler",
-        "Çıkış Yap"
-    )
-
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        menuItems.forEach { item ->
-            Text(
-                text = item,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .clickable { onMenuItemClick(item) },
-                style = MaterialTheme.typography.bodyLarge
+                    .padding(top = 10.dp)
+                    .fillMaxWidth()  // Görselin genişliğini kartla uyumlu yap
+                    .height(150.dp)
+                    .clip(RoundedCornerShape(32.dp)), // Yüksekliği belirleyin
+            )
+            Text(
+                text = courseName,
+                modifier = Modifier
+                    .padding(start = 20.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
+                    .align(Alignment.CenterHorizontally),
+                color = colorResource(id = R.color.title_color)
             )
         }
     }
 }
-@Preview(showBackground = true)
-@Composable
-fun HomeScreenPreview() {
-    HomeScreen()
-}
+
+

@@ -5,10 +5,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.learnconnect.ViewModels.LoginViewModel
-import com.example.learnconnect.ViewModels.RegisterViewModel
+import com.example.learnconnect.ui.HomeScreen
+import com.example.learnconnect.viewModels.LoginViewModel
+import com.example.learnconnect.viewModels.RegisterViewModel
 import com.example.learnconnect.ui.LoginScreen
 import com.example.learnconnect.ui.RegisterScreen
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
 fun AppNavHost() {
@@ -31,6 +33,13 @@ fun AppNavHost() {
             RegisterScreen(
                 viewModel = registerViewModel,
                 onNavigateToLogin = { navController.popBackStack() }
+            )
+        }
+        composable("home") {
+            val videoViewModel: VideoViewModel = hiltViewModel() // Hilt ile ViewModel'ı al
+            HomeScreen(onNavigateToProfile={navController.navigate("profile")},
+                onNavigateToVideo={navController.navigate("video")},
+                videoViewModel = videoViewModel
             )
         }
     }

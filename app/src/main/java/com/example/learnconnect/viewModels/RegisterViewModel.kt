@@ -1,4 +1,4 @@
-package com.example.learnconnect.ViewModels
+package com.example.learnconnect.viewModels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
