@@ -72,7 +72,13 @@ dependencies {
 
     implementation ("io.coil-kt:coil-compose:2.5.0")
 
-
+    testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
+    testImplementation ("org.mockito:mockito-core:4.11.0")
+    testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation ("androidx.arch.core:core-testing:2.2.0")
+    androidTestImplementation ("com.google.dagger:hilt-android-testing:2.48")
+    kaptAndroidTest ("com.google.dagger:hilt-compiler:2.48")
+    testImplementation (" org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
