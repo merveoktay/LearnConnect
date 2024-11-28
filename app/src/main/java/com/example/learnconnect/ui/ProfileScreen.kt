@@ -106,7 +106,7 @@ fun  ProfileBottomBar(onNavigateToHome: () -> Unit,onNavigateToCourses:()->Unit)
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                selected = true,
+                selected = false,
                 onClick = {onNavigateToHome() }
             )
             NavigationBarItem(
@@ -117,7 +117,7 @@ fun  ProfileBottomBar(onNavigateToHome: () -> Unit,onNavigateToCourses:()->Unit)
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                selected = false,
+                selected = true,
                 onClick = {}
             )
         }

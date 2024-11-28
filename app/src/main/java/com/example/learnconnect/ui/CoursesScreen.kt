@@ -90,7 +90,7 @@ fun CoursesTopBar() {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "LearnConnect", color = colorResource(id = R.color.title_color))
+                Text(text = "My Courses", color = colorResource(id = R.color.title_color))
             }
         },
         actions = {
@@ -165,7 +165,7 @@ fun CoursesBottomBar(onNavigateToProfile: () -> Unit, onNavigateToHome: () -> Un
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                selected = false,
+                selected = true,
                 onClick = {}
             )
             NavigationBarItem(
@@ -176,7 +176,7 @@ fun CoursesBottomBar(onNavigateToProfile: () -> Unit, onNavigateToHome: () -> Un
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                selected = true,
+                selected = false,
                 onClick = { onNavigateToHome() }
             )
             NavigationBarItem(
