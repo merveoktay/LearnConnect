@@ -50,24 +50,26 @@ import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
-fun HomeScreen(
+fun CoursesScreen(
     onNavigateToCourse: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToCourses: () -> Unit, videoViewModel: VideoViewModel,
+    onNavigateToHome: () -> Unit,
+    videoViewModel: VideoViewModel,
 ) {
     LaunchedEffect(Unit) {
         videoViewModel.loadCategories()
         videoViewModel.loadCourses()
+
     }
     Scaffold(
         topBar = {
-            HomeTopBar()
+                 CoursesTopBar()
         },
         bottomBar = {
-            HomeBottomBar(onNavigateToProfile, onNavigateToCourses)
+            CoursesBottomBar(onNavigateToProfile, onNavigateToHome)
         },
         content = { innerPadding ->
-            HomeContent(
+            CoursesContent(
                 modifier = Modifier.padding(innerPadding), videoViewModel,
                 onNavigateToCourse
             )
@@ -77,7 +79,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar() {
+fun CoursesTopBar() {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
         title = {
@@ -88,7 +90,7 @@ fun HomeTopBar() {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "LearnConnect", color = colorResource(id = R.color.title_color))
+                Text(text = "My Courses", color = colorResource(id = R.color.title_color))
             }
         },
         actions = {
@@ -98,12 +100,12 @@ fun HomeTopBar() {
 }
 
 @Composable
-fun HomeContent(
+fun CoursesContent(
     modifier: Modifier = Modifier,
     videoViewModel: VideoViewModel,
-    onNavigateToCourse: (Int) -> Unit,
-) {
-    var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
+    onNavigateToCourse:(Int)->Unit
+    ) {
+    var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by videoViewModel.categories.observeAsState(emptyList())
     val courses by videoViewModel.courses.observeAsState(emptyList())
 
@@ -136,9 +138,10 @@ fun HomeContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(filteredCourses) { course ->
-                VideoCard(
+                CoursesVideoCard(
                     imageUrl = course.course_image,
-                    courseName = course.name, onNavigateToCourse, course.id
+                    courseName = course.name,
+                    courseId=course.id,onNavigateToCourse
                 )
             }
         }
@@ -146,7 +149,7 @@ fun HomeContent(
 }
 
 @Composable
-fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
+fun CoursesBottomBar(onNavigateToProfile: () -> Unit, onNavigateToHome: () -> Unit) {
     BottomAppBar(
         containerColor = colorResource(id = R.color.hint_color)
     ) {
@@ -157,24 +160,24 @@ fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Un
             NavigationBarItem(
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.unselected_course_icon),
+                        painter = painterResource(id = R.drawable.selected_course_icon),
                         contentDescription = "My Courses",
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                selected = false,
-                onClick = { onNavigateToCourses() }
+                selected = true,
+                onClick = {}
             )
             NavigationBarItem(
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.selected_home_icon),
+                        painter = painterResource(id = R.drawable.unselected_home_icon),
                         contentDescription = "Home",
                         modifier = Modifier.size(32.dp)
                     )
                 },
-                selected = true,
-                onClick = { }
+                selected = false,
+                onClick = { onNavigateToHome() }
             )
             NavigationBarItem(
                 icon = {
@@ -192,7 +195,7 @@ fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Un
 }
 
 @Composable
-fun Chip(text: String, onClick: () -> Unit) {
+fun CoursesChip(text: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .clickable { onClick() }
@@ -214,12 +217,7 @@ fun Chip(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun VideoCard(
-    imageUrl: String,
-    courseName: String,
-    onNavigateToCourse: (Int) -> Unit,
-    courseId: Int,
-) {
+fun CoursesVideoCard(imageUrl: String, courseName: String,courseId:Int,onNavigateToCourse:(Int)->Unit) {
     Card(
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(
@@ -251,5 +249,3 @@ fun VideoCard(
         }
     }
 }
-
-

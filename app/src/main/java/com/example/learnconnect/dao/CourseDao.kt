@@ -2,6 +2,7 @@ package com.example.learnconnect.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
@@ -13,14 +14,13 @@ import com.example.learnconnect.models.Video
 @Dao
 interface CourseDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCourseType(courseType: CourseType)
-
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCourse(course: Course)
 
-    @Insert
-    suspend fun insertVideo(video: Video)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertVideo(videos: Video)
 
     @Insert
     suspend fun insertUserCourse(userCourse: UserCourse)
@@ -29,7 +29,15 @@ interface CourseDao {
     suspend fun insertUserFavoriteCourse(userFavoriteCourse: UserFavoriteCourse)
 
     @Query("SELECT * FROM courses WHERE course_type_id = :courseTypeId")
-    suspend fun getCoursesByType(courseTypeId: Int): List<Course>
+    suspend fun getAllCoursesByType(courseTypeId: Int): List<Course>
+    @Query("SELECT * FROM courses ")
+    suspend fun getAllCourse(): List<Course>
+
+    @Query("SELECT * FROM courses  WHERE id = :courseId")
+    suspend fun getCourse(courseId: Int): Course
+
+    @Query("SELECT * FROM videos")
+    suspend fun getAllVideos(): List<Video>
 
     @Query("SELECT * FROM videos WHERE course_id = :courseId")
     suspend fun getVideosByCourse(courseId: Int): List<Video>

@@ -2,6 +2,7 @@ package com.example.learnconnect.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -10,6 +11,7 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -27,17 +29,27 @@ private val LightColorScheme = lightColorScheme(
     secondary = PurpleGrey40,
     tertiary = Pink40
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
 )
-
+private val darkColorPalette = darkColorScheme(
+    primary = Color(0xFFFF6F61), // brand_color
+    secondary = Color(0xFFAAAAAA), // hint_color
+    background = Color(0xFF333333), // dark_background_color
+    surface = Color(0xFF333333), // dark_background_color
+    onPrimary = Color(0xFFFFFFFF), // Text on primary (white)
+    onSecondary = Color(0xFF333333), // title_color
+    onBackground = Color(0xFFFFFFFF), // white text on dark background
+    onSurface = Color(0xFFFFFFFF), // white text on dark surface
+)
+private val lightColorPalette = lightColorScheme(
+    primary = Color(0xFFFF6F61), // brand_color
+    secondary = Color(0xFFAAAAAA), // hint_color
+    background = Color(0xFFFFFFFF), // light_background_color
+    surface = Color(0xFFF5F5F5), // surface_color
+    onPrimary = Color(0xFFFFFFFF), // Text on primary (white)
+    onSecondary = Color(0xFF333333), // title_color
+    onBackground = Color(0xFF333333), // title_color
+    onSurface = Color(0xFF333333), // body_text_color
+)
 @Composable
 fun LearnConnectTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -51,8 +63,8 @@ fun LearnConnectTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> darkColorPalette
+        else -> lightColorPalette
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -68,4 +80,18 @@ fun LearnConnectTheme(
         typography = Typography,
         content = content
     )
+}
+@Composable
+fun AppTheme(isDarkMode: Boolean, content: @Composable () -> Unit) {
+    val colors = if (isDarkMode) {
+        darkColorPalette
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // Dark Mode
+
+    } else {
+        lightColorPalette
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // Light Mode
+
+    }
+
+
 }

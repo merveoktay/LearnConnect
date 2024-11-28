@@ -1,7 +1,5 @@
-package com.example.learnconnect.ViewModels
+package com.example.learnconnect.viewModels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learnconnect.repositories.UserRepository
@@ -29,14 +27,14 @@ class LoginViewModel @Inject constructor(private val repository: UserRepository)
 
     fun login(
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: () -> Unit
     ) {
         viewModelScope.launch {
             val result = repository.loginUser(email.value, password.value)
             if (result) {
                 onSuccess()
             } else {
-                onError("Invalid email or password")
+                onError()
             }
         }
     }

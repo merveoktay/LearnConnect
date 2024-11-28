@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Light Theme -->
+    <style name="Theme.LearnConnect.Light" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/light_background_color</item>
+        <item name="android:windowBackground">@color/light_background_color</item>
+        <item name="android:textColorPrimary">@color/dark_background_color</item>
+    </style>
 
-    <style name="Theme.LearnConnect" parent="android:Theme.Material.Light.NoActionBar" />
+    <!-- Dark Theme -->
+    <style name="Theme.LearnConnect.Dark" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/dark_background_color</item>
+        <item name="android:windowBackground">@color/dark_background_color</item>
+        <item name="android:textColorPrimary">@color/light_background_color</item>
+    </style>
 </resources>

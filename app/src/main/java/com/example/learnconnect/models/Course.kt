@@ -18,6 +18,6 @@ import androidx.room.PrimaryKey
 data class Course(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
-    val description: String,
+    val course_image:String,
     val course_type_id: Int // Foreign key to CourseType
 )
