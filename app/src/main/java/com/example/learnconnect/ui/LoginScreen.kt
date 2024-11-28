@@ -30,20 +30,21 @@ import com.example.learnconnect.viewModels.LoginViewModel
 fun LoginScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToHome: () -> Unit,
-    viewModel: LoginViewModel= hiltViewModel()
+    viewModel: LoginViewModel = hiltViewModel(),
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var buttonColor = colorResource(id = R.color.hint_color)
     var clickable = false
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) } // State to control dialog visibility
+    var errorMessage by remember { mutableStateOf("") } // State to hold error message
 
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.surface_color)) // Arka plan rengi
     ) {
-
 
         Column(
             modifier = Modifier
@@ -61,7 +62,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-
             Text(
                 text = "Learn Connect",
                 style = TextStyle(
@@ -77,70 +77,61 @@ fun LoginScreen(
                 value = email,
                 onValueChange = { newEmail ->
                     email = newEmail
-                    viewModel.onEmailChange(newEmail)},
+                    viewModel.onEmailChange(newEmail)
+                },
                 label = { Text("Email", color = colorResource(id = R.color.hint_color)) },
-                modifier = Modifier
-                    .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
             )
-
 
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedTextField(
                 value = password,
-                onValueChange = {newPassword ->
+                onValueChange = { newPassword ->
                     password = newPassword
-                    viewModel.onPasswordChange(newPassword)},
+                    viewModel.onPasswordChange(newPassword)
+                },
                 label = { Text("Password", color = colorResource(id = R.color.hint_color)) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
-                visualTransformation =  if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(
-                        onClick = { isPasswordVisible = !isPasswordVisible }  // Tıklandığında şifreyi göster/gizle
+                        onClick = {
+                            isPasswordVisible = !isPasswordVisible
+                        }
                     ) {
-                        Icon(painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
+                        Icon(
+                            painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
                             contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                         )
                     }
                 }
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(end = 16.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Text(
-                    text = "Forgot Password?",
-                    style = TextStyle(
-                        color = Color(0xFFE53935),
-                        fontSize = 14.sp
-                    ),
-                    modifier = Modifier.clickable { /* Forgot password işlemi */ }
-                )
-            }
-
             Spacer(modifier = Modifier.height(50.dp))
-            if (email.isNotEmpty()  && password.isNotEmpty() ) {
+            if (email.isNotEmpty() && password.isNotEmpty()) {
                 buttonColor = colorResource(id = R.color.brand_color)
                 clickable = true
             } else {
                 buttonColor = colorResource(id = R.color.hint_color)
                 clickable = false
             }
+
             Button(
                 onClick = {
                     if (clickable) {
                         viewModel.login(
-                            onSuccess = { onNavigateToHome() },
-                            onError = { errorMessage -> println(errorMessage) }
+                            onSuccess = {
+                                onNavigateToHome()  // Ensure this is correctly navigating
+                            },
+                            onError = {
+                                errorMessage = "User's email address or password is incorrect."
+                                showErrorDialog = true // Show the error dialog
+                            }
                         )
                     }
                 },
@@ -168,7 +159,7 @@ fun LoginScreen(
                     text = "Don't have an account? ",
                     color = colorResource(id = R.color.title_color)
                 )
-                TextButton(onClick = {onNavigateToRegister() }) {
+                TextButton(onClick = { onNavigateToRegister() }) {
                     Text(
                         text = "Register Now",
                         style = TextStyle(
@@ -179,7 +170,30 @@ fun LoginScreen(
                 }
             }
         }
-
     }
+
+    // Show error dialog if login fails
+    if (showErrorDialog) {
+        ErrorDialog(errorMessage = errorMessage) {
+            showErrorDialog = false // Dismiss the dialog
+        }
+    }
+}
+@Composable
+fun ErrorDialog( errorMessage: String,onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Login Failed")
+        },
+        text = {
+            Text(text = errorMessage)
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "OK")
+            }
+        }
+    )
 }
 

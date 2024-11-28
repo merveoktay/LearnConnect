@@ -50,27 +50,24 @@ import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
-fun HomeScreen(
-    onNavigateToProfile: () -> Unit,
-    onNavigateToCourses: () -> Unit, videoViewModel: VideoViewModel,
-) {
+fun CoursesScreen(onNavigateToVideo: () -> Unit,onNavigateToProfile: () -> Unit,onNavigateToHome: () -> Unit,videoViewModel: VideoViewModel){
     LaunchedEffect(Unit) {
         videoViewModel.loadCategories()
         videoViewModel.loadCourses()
     }
-    val searchQuery by videoViewModel.searchQuery.observeAsState("") // Arama sorgusunu ViewModel'den al
+    val searchQuery by videoViewModel.searchQuery.observeAsState("")
 
     Scaffold(
         topBar = {
-            HomeTopBar()
+            CoursesTopBar()
         },
         bottomBar = {
-            HomeBottomBar(onNavigateToProfile, onNavigateToCourses)
+            CoursesBottomBar(onNavigateToProfile, onNavigateToHome)
         },
         content = { innerPadding ->
-            HomeContent(
+            CoursesContent(
                 modifier = Modifier.padding(innerPadding), videoViewModel,
-                onNavigateToCourses
+                onNavigateToHome
             )
         }
     )
@@ -78,7 +75,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar() {
+fun CoursesTopBar() {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
         title = {
@@ -99,13 +96,13 @@ fun HomeTopBar() {
 }
 
 @Composable
-fun HomeContent(
+fun CoursesContent(
     modifier: Modifier = Modifier,
     videoViewModel: VideoViewModel,
-    onNavigateToCourses: () -> Unit,
+    onNavigateToHome: () -> Unit,
 
     ) {
-    var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
+    var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by videoViewModel.categories.observeAsState(emptyList())
     val courses by videoViewModel.courses.observeAsState(emptyList())
 
@@ -148,7 +145,7 @@ fun HomeContent(
 }
 
 @Composable
-fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
+fun CoursesBottomBar(onNavigateToProfile: () -> Unit, onNavigateToHome: () -> Unit) {
     BottomAppBar(
         containerColor = colorResource(id = R.color.hint_color)
     ) {
@@ -159,24 +156,24 @@ fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Un
             NavigationBarItem(
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.unselected_course_icon),
+                        painter = painterResource(id = R.drawable.selected_course_icon),
                         contentDescription = "My Courses",
                         modifier = Modifier.size(32.dp)
                     )
                 },
                 selected = false,
-                onClick = { onNavigateToCourses() }
+                onClick = {}
             )
             NavigationBarItem(
                 icon = {
                     Icon(
-                        painter = painterResource(id = R.drawable.selected_home_icon),
+                        painter = painterResource(id = R.drawable.unselected_home_icon),
                         contentDescription = "Home",
                         modifier = Modifier.size(32.dp)
                     )
                 },
                 selected = true,
-                onClick = { }
+                onClick = { onNavigateToHome()}
             )
             NavigationBarItem(
                 icon = {
@@ -194,7 +191,7 @@ fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Un
 }
 
 @Composable
-fun Chip(text: String, onClick: () -> Unit) {
+fun CoursesChip(text: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .clickable { onClick() }
@@ -216,7 +213,7 @@ fun Chip(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun VideoCard(imageUrl: String, courseName: String) {
+fun CoursesVideoCard(imageUrl: String, courseName: String) {
     Card(
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(
@@ -248,5 +245,3 @@ fun VideoCard(imageUrl: String, courseName: String) {
         }
     }
 }
-
-

@@ -5,11 +5,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.learnconnect.ui.CoursesScreen
+import com.example.learnconnect.ui.FavoriteScreen
 import com.example.learnconnect.ui.HomeScreen
 import com.example.learnconnect.viewModels.LoginViewModel
 import com.example.learnconnect.viewModels.RegisterViewModel
 import com.example.learnconnect.ui.LoginScreen
+import com.example.learnconnect.ui.ProfileScreen
 import com.example.learnconnect.ui.RegisterScreen
+import com.example.learnconnect.ui.VideoScreen
 import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
@@ -21,26 +25,59 @@ fun AppNavHost() {
         startDestination = "login"
     ) {
         composable("login") {
-            val loginViewModel: LoginViewModel = hiltViewModel() // Hilt ile ViewModel'ı al
+            val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(
                 viewModel = loginViewModel,
                 onNavigateToRegister = { navController.navigate("register") },
-                onNavigateToHome = { navController.navigate("home") }
+                onNavigateToHome = {
+                    navController.navigate("home") {
+                        popUpTo("login") { inclusive = true }
+                    }
+                }
             )
         }
         composable("register") {
-            val registerViewModel: RegisterViewModel = hiltViewModel() // Hilt ile ViewModel'ı al
+            val registerViewModel: RegisterViewModel = hiltViewModel()
             RegisterScreen(
                 viewModel = registerViewModel,
                 onNavigateToLogin = { navController.popBackStack() }
             )
         }
         composable("home") {
-            val videoViewModel: VideoViewModel = hiltViewModel() // Hilt ile ViewModel'ı al
-            HomeScreen(onNavigateToProfile={navController.navigate("profile")},
-                onNavigateToVideo={navController.navigate("video")},
+            val videoViewModel: VideoViewModel = hiltViewModel()
+            HomeScreen(
+                onNavigateToProfile = { navController.navigate("profile") },
+                onNavigateToCourses = { navController.navigate("courses") },
                 videoViewModel = videoViewModel
             )
+        }
+        composable("favorite") {
+            val videoViewModel: VideoViewModel = hiltViewModel()
+            FavoriteScreen(
+                onNavigateToCourses = { navController.navigate("courses") },
+                onNavigateToProfile = { navController.navigate("profile") },
+                videoViewModel = videoViewModel
+            )
+        }
+
+        composable("courses") {
+            val videoViewModel: VideoViewModel = hiltViewModel()
+            CoursesScreen(
+                onNavigateToVideo = { navController.navigate("video") },
+                onNavigateToProfile = { navController.navigate("profile") },
+                onNavigateToHome = { navController.navigate("home") },
+                videoViewModel = videoViewModel
+            )
+        }
+        composable("profile") {
+            ProfileScreen(
+                onNavigateToHome = { navController.navigate("home") },
+                onNavigateToFavorite = { navController.navigate("favorite") },
+                onNavigateToCourses = { navController.navigate("courses") }
+            )
+        }
+        composable("video") {
+            VideoScreen()
         }
     }
 }

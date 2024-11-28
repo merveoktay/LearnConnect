@@ -17,15 +17,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -50,35 +45,32 @@ import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
-fun HomeScreen(
+fun FavoriteScreen(
+    onNavigateToCourses: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToCourses: () -> Unit, videoViewModel: VideoViewModel,
+    videoViewModel: VideoViewModel,
 ) {
     LaunchedEffect(Unit) {
         videoViewModel.loadCategories()
         videoViewModel.loadCourses()
     }
-    val searchQuery by videoViewModel.searchQuery.observeAsState("") // Arama sorgusunu ViewModel'den al
-
     Scaffold(
         topBar = {
-            HomeTopBar()
-        },
-        bottomBar = {
-            HomeBottomBar(onNavigateToProfile, onNavigateToCourses)
+            FavoriteTopBar()
         },
         content = { innerPadding ->
-            HomeContent(
+            FavoriteContent(
                 modifier = Modifier.padding(innerPadding), videoViewModel,
                 onNavigateToCourses
             )
         }
     )
+
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar() {
+fun FavoriteTopBar() {
     TopAppBar(
         colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
         title = {
@@ -99,12 +91,11 @@ fun HomeTopBar() {
 }
 
 @Composable
-fun HomeContent(
+fun FavoriteContent(
     modifier: Modifier = Modifier,
     videoViewModel: VideoViewModel,
-    onNavigateToCourses: () -> Unit,
-
-    ) {
+    onNavigateToVideo: () -> Unit,
+) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
     val categories by videoViewModel.categories.observeAsState(emptyList())
     val courses by videoViewModel.courses.observeAsState(emptyList())
@@ -115,13 +106,12 @@ fun HomeContent(
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        LazyRow(
+      /*  LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
             items(categories) { category ->
                 Chip(
                     text = category.name,
@@ -140,59 +130,13 @@ fun HomeContent(
             items(filteredCourses) { course ->
                 VideoCard(
                     imageUrl = course.course_image,
-                    courseName = course.name
+                    courseName = course.name, onNavigateToVideo
                 )
             }
-        }
+        }*/
     }
 }
-
-@Composable
-fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
-    BottomAppBar(
-        containerColor = colorResource(id = R.color.hint_color)
-    ) {
-        NavigationBar(
-            containerColor = colorResource(id = R.color.hint_color),
-            contentColor = colorResource(id = R.color.title_color)
-        ) {
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.unselected_course_icon),
-                        contentDescription = "My Courses",
-                        modifier = Modifier.size(32.dp)
-                    )
-                },
-                selected = false,
-                onClick = { onNavigateToCourses() }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.selected_home_icon),
-                        contentDescription = "Home",
-                        modifier = Modifier.size(32.dp)
-                    )
-                },
-                selected = true,
-                onClick = { }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.unselected_profile_icon),
-                        contentDescription = "Profile",
-                        modifier = Modifier.size(32.dp)
-                    )
-                },
-                selected = false,
-                onClick = { onNavigateToProfile() }
-            )
-        }
-    }
-}
-
+/*
 @Composable
 fun Chip(text: String, onClick: () -> Unit) {
     Surface(
@@ -216,7 +160,7 @@ fun Chip(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun VideoCard(imageUrl: String, courseName: String) {
+fun VideoCard(imageUrl: String, courseName: String, onNavigateToVideo: () -> Unit) {
     Card(
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(
@@ -225,7 +169,7 @@ fun VideoCard(imageUrl: String, courseName: String) {
         modifier = Modifier
             .fillMaxSize(1f)
             .clickable {
-
+                onNavigateToVideo() // Tıklama gerçekleştiğinde bu fonksiyon çağrılacak
             }
     ) {
         Column {
@@ -248,5 +192,4 @@ fun VideoCard(imageUrl: String, courseName: String) {
         }
     }
 }
-
-
+*/

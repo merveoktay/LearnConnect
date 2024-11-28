@@ -27,14 +27,14 @@ class LoginViewModel @Inject constructor(private val repository: UserRepository)
 
     fun login(
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: () -> Unit
     ) {
         viewModelScope.launch {
             val result = repository.loginUser(email.value, password.value)
             if (result) {
                 onSuccess()
             } else {
-                onError("Invalid email or password")
+                onError()
             }
         }
     }
