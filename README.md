@@ -1,12 +1,5 @@
 # LearnConnect App
-LearnConnect, modern bir video tabanlı eğitim platformudur. Kullanıcıların kurslara kaydolabildiği hem de ders videolarını izleyebildiği bir uygulamadır. Kullanıcılar isterlerse beğendikleri kursları favorilerine ekleyebilmektedirler.
----
-
-## Özellikler
-- **Profil Yönetimi:** Kullanıcılar profil sayfasını görüntüleyebilir.
-- **Favori Kurslar:** Kullanıcılar favori kurslarını kolayca görebilir.
-- **Tema Seçimi:** Karanlık veya aydınlık mod arasında geçiş yapabilirsiniz.
-
+LearnConnect, modern bir video tabanlı eğitim platformudur. Kullanıcıların kurslara kaydolabildiği hem de ders videolarını izleyebildiği bir uygulamadır. Kullanıcılar kategorilere göre kursları listeleyebilir, isterlerse beğendikleri kursları favorilerine ekleyebilmektedirler.
 ---
 
 ## Kuallanıcı Giriş Ve Kayıt Ekran Görüntüleri
