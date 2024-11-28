@@ -19,8 +19,8 @@ interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCourse(course: Course)
 
-    @Insert
-    suspend fun insertVideo(video: Video)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertVideo(videos: Video)
 
     @Insert
     suspend fun insertUserCourse(userCourse: UserCourse)
@@ -33,7 +33,10 @@ interface CourseDao {
     @Query("SELECT * FROM courses ")
     suspend fun getAllCourse(): List<Course>
 
-    @Query("SELECT * FROM Video")
+    @Query("SELECT * FROM courses  WHERE id = :courseId")
+    suspend fun getCourse(courseId: Int): Course
+
+    @Query("SELECT * FROM videos")
     suspend fun getAllVideos(): List<Video>
 
     @Query("SELECT * FROM videos WHERE course_id = :courseId")

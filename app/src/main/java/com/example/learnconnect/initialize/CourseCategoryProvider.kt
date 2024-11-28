@@ -39,12 +39,6 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
             if (existingCourse.isEmpty()) {
                 val course = listOf(
                     Course(
-                        0,
-                        "Android Basics 2024",
-                        "https://thumbs.dreamstime.com/z/android-symbol-figure-white-background-android-o-android-symbol-figure-white-background-android-103876615.jpg?ct=jpeg",
-                        0
-                    ),
-                    Course(
                         1,
                         "Flutter Architecture Template v2",
                         "https://thumbs.dreamstime.com/z/may-brazil-photo-illustration-flutter-entertainment-logo-displayed-smartphone-screen-320096491.jpg?ct=jpeg",
@@ -301,28 +295,28 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
                     ),
 
                     Video(
-                        0,
+                        27,
                         "Activities & the Activity Lifecycle",
                         "https://youtu.be/SJw3Nu_h8kk?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
-                        0
+                        10
                     ),
                     Video(
-                        1,
+                        28,
                         "Tasks, Back Stack & Launch Modes",
                         "https://youtu.be/Z0AzoFOiH9c?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
-                        0
+                        10
                     ),
                     Video(
-                        2,
+                        29,
                         "ViewModels",
                         "https://youtu.be/9sqvBydNJSg?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
-                        0
+                        10
                     ),
                     Video(
-                        3,
+                        30,
                         "What is the Context?",
                         "https://youtu.be/YdnM2ZvrIFM?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
-                        0
+                        10
                     ),
 
                     )
@@ -353,6 +347,10 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
     suspend fun getCourses(): List<Course> {
         Log.d("course", courseDao.getAllCourse().toString())
         return courseDao.getAllCourse()
+    }
+    suspend fun getCourse(course_id:Int): Course {
+        Log.d("course", courseDao.getAllCourse().toString())
+        return courseDao.getCourse(course_id)
     }
 
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {

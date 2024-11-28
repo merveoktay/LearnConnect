@@ -14,6 +14,7 @@ import com.example.learnconnect.viewModels.RegisterViewModel
 import com.example.learnconnect.ui.LoginScreen
 import com.example.learnconnect.ui.ProfileScreen
 import com.example.learnconnect.ui.RegisterScreen
+import com.example.learnconnect.ui.SplashScreen
 import com.example.learnconnect.ui.VideoScreen
 import com.example.learnconnect.viewModels.VideoViewModel
 
@@ -23,8 +24,12 @@ fun AppNavHost() {
 
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = "splash"
     ) {
+        composable("splash") {
+            SplashScreen(    onNavigateToLogin = { navController.navigate("login") }
+            )
+        }
         composable("login") {
             val loginViewModel: LoginViewModel = hiltViewModel()
             LoginScreen(

@@ -12,7 +12,6 @@ import com.example.learnconnect.models.User
 import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.UserFavoriteCourse
 import com.example.learnconnect.models.Video
-import javax.inject.Inject
 
 
 @Database(
@@ -24,18 +23,14 @@ abstract class AppDatabase : RoomDatabase(){
     abstract fun userDao(): UserDao
     abstract fun courseDao(): CourseDao
     companion object {
-        // Migration işlemi burada yapılacak
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("CREATE TABLE IF NOT EXISTS `courses_temp` (`id` INTEGER, `name` TEXT, `course_image` TEXT, `course_type_id` INTEGER, PRIMARY KEY(`id`))")
 
-                // Eski tablodan yeni tablodaki veri ile uyumsuz olan sütunları kopyalıyoruz
                 database.execSQL("INSERT INTO `courses_temp` (`id`, `name`, `course_image`, `course_type_id`) SELECT `id`, `name`, `course_image`, `course_type_id` FROM `courses`")
 
-                // Eski tabloyu siliyoruz
                 database.execSQL("DROP TABLE `courses`")
 
-                // Yeni tabloyu eski tablonun adıyla değiştiriyoruz
                 database.execSQL("ALTER TABLE `courses_temp` RENAME TO `courses`")
             }
         }

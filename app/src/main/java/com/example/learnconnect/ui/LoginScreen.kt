@@ -126,11 +126,11 @@ fun LoginScreen(
                     if (clickable) {
                         viewModel.login(
                             onSuccess = {
-                                onNavigateToHome()  // Ensure this is correctly navigating
+                                onNavigateToHome()
                             },
                             onError = {
                                 errorMessage = "User's email address or password is incorrect."
-                                showErrorDialog = true // Show the error dialog
+                                showErrorDialog = true
                             }
                         )
                     }
@@ -153,7 +153,9 @@ fun LoginScreen(
 
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+
             ) {
                 Text(
                     text = "Don't have an account? ",

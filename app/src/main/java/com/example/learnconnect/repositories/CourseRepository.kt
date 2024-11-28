@@ -7,7 +7,7 @@ import com.example.learnconnect.models.Video
 import javax.inject.Inject
 
 class CourseRepository @Inject constructor(
-    private val courseCategoryProvider: CourseCategoryProvider  // Yeni Provider'ı Enjekte Et
+    private val courseCategoryProvider: CourseCategoryProvider
 ) {
     suspend fun initializeAllCategories() {
         courseCategoryProvider.initializeCategories()
@@ -19,15 +19,21 @@ class CourseRepository @Inject constructor(
         courseCategoryProvider.initializeVideos()
     }
     suspend fun getCategories(): List<CourseType> {
-        return courseCategoryProvider.getCategories()  // Kategorileri döndür
+        return courseCategoryProvider.getCategories()
     }
     suspend fun getCourses(): List<Course> {
-        return courseCategoryProvider.getCourses()  // Kategorileri döndür
+        return courseCategoryProvider.getCourses()
+    }
+    suspend fun getCourse(courseTypeId: Int): Course {
+        return courseCategoryProvider.getCourse(courseTypeId)
     }
     suspend fun getVideos(): List<Video> {
-        return courseCategoryProvider.getVideos()  // Kategorileri döndür
+        return courseCategoryProvider.getVideos()
     }
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
         return courseCategoryProvider.getCoursesByType(courseTypeId)
+    }
+    suspend fun getVideosByCourseId(courseId: Int): List<Video> {
+        return courseCategoryProvider.getVideosByCourse(courseId)
     }
 }

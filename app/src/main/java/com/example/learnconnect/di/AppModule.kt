@@ -16,38 +16,35 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    // Veritabanı sağlayıcı metodu
     @Provides
     @Singleton
     fun provideAppDatabase(app: Application): AppDatabase {
         return Room.databaseBuilder(app, AppDatabase::class.java, "your-database-name")
-            .addMigrations(AppDatabase.MIGRATION_1_2)  // Migration'ı ekliyoruz
+            .addMigrations(AppDatabase.MIGRATION_1_2)
             .fallbackToDestructiveMigration()
             .build()
     }
 
-    // CourseDao sağlayıcı metodu
     @Provides
     @Singleton
     fun provideCourseDao(database: AppDatabase): CourseDao {
         return database.courseDao()
     }
 
-    // UserDao sağlayıcı metodu
+
     @Provides
     @Singleton
     fun provideUserDao(database: AppDatabase): UserDao {
         return database.userDao()
     }
 
-    // CourseCategoryProvider sağlayıcı metodu
+
     @Provides
     @Singleton
     fun provideCourseCategoryProvider(courseDao: CourseDao): CourseCategoryProvider {
         return CourseCategoryProvider(courseDao)
     }
 
-    // UserRepository sağlayıcı metodu
     @Provides
     @Singleton
     fun provideUserRepository(userDao: UserDao): UserRepository {

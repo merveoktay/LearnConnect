@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
@@ -23,28 +24,44 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.example.learnconnect.R
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseScreen(
+    viewModel: VideoViewModel = hiltViewModel(),
     onFavoriteClick: () -> Unit,
     onJoinClick: () -> Unit,
-    courseId:Int
+    isUserEnrolled: Boolean,
+    courseId: Int
 ) {
-    var buttonColor = colorResource(id = R.color.hint_color)
+
+
+    val videos by viewModel.videos.observeAsState(emptyList())
+    val course =viewModel.getCourse(courseId)
+    LaunchedEffect(courseId) {
+        viewModel.loadVideos()
+        viewModel.getVideosForCourse(courseId)
+
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Courses Name", color = colorResource(id = R.color.title_color))
+                    Text(text = "Video Name", color = colorResource(id = R.color.title_color))
                 },
                 navigationIcon = {
                     Icon(
@@ -81,22 +98,27 @@ fun CourseScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.weight(1f)
             ) {
-                items(3) {
-                    VideoCard(
-                        imageUrl = "",
-                        videoName = "Video Name"
-                    )
+
+                items(videos) { video ->
+                    if (course != null) {
+                        VideoCard(
+                            imageUrl = course.course_image,
+                            videoName = video.title
+                        )
+                    }
                 }
             }
 
-            Button(
-                onClick = { onJoinClick() },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
-            ) {
-                Text(text = "Join The Course", color = Color.Black)
+            if (!isUserEnrolled) {
+                Button(
+                    onClick = { onJoinClick() },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.brand_color))
+                ) {
+                    Text(text = "Join The Course", color = colorResource(id = R.color.title_color))
+                }
             }
         }
     }

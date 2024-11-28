@@ -17,13 +17,15 @@ import javax.inject.Inject
 @HiltViewModel
 class VideoViewModel @Inject constructor(private val courseRepository: CourseRepository) : ViewModel() {
 
-    // Kategoriler
     private val _categories = MutableLiveData<List<CourseType>>()
     val categories: LiveData<List<CourseType>> get() = _categories
 
 
     private val _courses = MutableLiveData<List<Course>>()
     val courses: LiveData<List<Course>> get() = _courses
+
+    private val _course = MutableLiveData<Course?>()
+    val course: LiveData<Course?> get() = _course
 
     private val _videos = MutableLiveData<List<Video>>()
     val videos: LiveData<List<Video>> get() = _videos
@@ -61,7 +63,7 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
                 courseRepository.initializeAllCourses()
                 val allCourses = courseRepository.getCourses()
                 _courses.value = allCourses
-                filterCourses() // Kurslar yüklendiğinde filtreleme yap
+                filterCourses()
             } catch (e: Exception) {
                 Log.e("VideoViewModel", "Error loading courses: ${e.message}")
             }
@@ -73,7 +75,7 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
                 courseRepository.initializeAllVideo()
                 val allVideos = courseRepository.getVideos()
                 _videos.value = allVideos
-                filterVideos() // Videolar yüklendiğinde filtreleme yap
+                filterVideos()
             } catch (e: Exception) {
                 Log.e("VideoViewModel", "Error loading videos: ${e.message}")
             }
@@ -87,12 +89,24 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
     private fun filterCourses() {
         val query = searchQuery.value.orEmpty()
         val courses = _courses.value.orEmpty()
-        (filteredCourses as MediatorLiveData).value = courses.filter { course ->
+        _filteredCourses.value = courses.filter { course ->
             course.name.contains(query, ignoreCase = true)
         }
     }
     fun getCoursesByCategory(categoryId: Int): List<Course> {
         return _courses.value?.filter { it.course_type_id == categoryId } ?: emptyList()
+    }
+    fun getVideosForCourse(courseId: Int) {
+        viewModelScope.launch {
+            val videoList = courseRepository.getVideosByCourseId(courseId)
+            _videos.postValue(videoList)
+        }
+    }
+    fun getVideosByCourse(courseId: Int): List<Video> {
+        return _videos.value?.filter { it.course_id == courseId } ?: emptyList()
+    }
+    fun getCourse(courseId: Int): Course? {
+        return _course.value?.takeIf { it.id == courseId }
     }
 
     private fun filterVideos() {

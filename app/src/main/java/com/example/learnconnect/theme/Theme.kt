@@ -2,6 +2,7 @@ package com.example.learnconnect.theme
 
 import android.app.Activity
 import android.os.Build
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
@@ -62,8 +63,8 @@ fun LearnConnectTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+        darkTheme -> darkColorPalette
+        else -> lightColorPalette
     }
     val view = LocalView.current
     if (!view.isInEditMode) {
@@ -84,12 +85,13 @@ fun LearnConnectTheme(
 fun AppTheme(isDarkMode: Boolean, content: @Composable () -> Unit) {
     val colors = if (isDarkMode) {
         darkColorPalette
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES) // Dark Mode
+
     } else {
         lightColorPalette
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO) // Light Mode
+
     }
 
-    MaterialTheme(
-        colorScheme = colors,
-        content = content
-    )
+
 }
