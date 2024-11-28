@@ -51,6 +51,7 @@ import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
 fun HomeScreen(
+    onNavigateToCourse: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToCourses: () -> Unit, videoViewModel: VideoViewModel,
 ) {
@@ -58,8 +59,6 @@ fun HomeScreen(
         videoViewModel.loadCategories()
         videoViewModel.loadCourses()
     }
-    val searchQuery by videoViewModel.searchQuery.observeAsState("") // Arama sorgusunu ViewModel'den al
-
     Scaffold(
         topBar = {
             HomeTopBar()
@@ -70,7 +69,7 @@ fun HomeScreen(
         content = { innerPadding ->
             HomeContent(
                 modifier = Modifier.padding(innerPadding), videoViewModel,
-                onNavigateToCourses
+                onNavigateToCourse
             )
         }
     )
@@ -102,9 +101,8 @@ fun HomeTopBar() {
 fun HomeContent(
     modifier: Modifier = Modifier,
     videoViewModel: VideoViewModel,
-    onNavigateToCourses: () -> Unit,
-
-    ) {
+    onNavigateToCourse: (Int) -> Unit,
+) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
     val categories by videoViewModel.categories.observeAsState(emptyList())
     val courses by videoViewModel.courses.observeAsState(emptyList())
@@ -140,7 +138,7 @@ fun HomeContent(
             items(filteredCourses) { course ->
                 VideoCard(
                     imageUrl = course.course_image,
-                    courseName = course.name
+                    courseName = course.name, onNavigateToCourse, course.id
                 )
             }
         }
@@ -216,7 +214,12 @@ fun Chip(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun VideoCard(imageUrl: String, courseName: String) {
+fun VideoCard(
+    imageUrl: String,
+    courseName: String,
+    onNavigateToCourse: (Int) -> Unit,
+    courseId: Int,
+) {
     Card(
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(
@@ -225,7 +228,7 @@ fun VideoCard(imageUrl: String, courseName: String) {
         modifier = Modifier
             .fillMaxSize(1f)
             .clickable {
-
+                onNavigateToCourse(courseId)
             }
     ) {
         Column {

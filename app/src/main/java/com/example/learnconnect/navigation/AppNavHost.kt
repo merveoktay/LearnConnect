@@ -5,6 +5,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.learnconnect.ui.CourseScreen
 import com.example.learnconnect.ui.CoursesScreen
 import com.example.learnconnect.ui.FavoriteScreen
 import com.example.learnconnect.ui.HomeScreen
@@ -46,6 +47,9 @@ fun AppNavHost() {
         composable("home") {
             val videoViewModel: VideoViewModel = hiltViewModel()
             HomeScreen(
+                onNavigateToCourse = { courseId ->
+                    navController.navigate("course/$courseId")
+                },
                 onNavigateToProfile = { navController.navigate("profile") },
                 onNavigateToCourses = { navController.navigate("courses") },
                 videoViewModel = videoViewModel
@@ -63,7 +67,9 @@ fun AppNavHost() {
         composable("courses") {
             val videoViewModel: VideoViewModel = hiltViewModel()
             CoursesScreen(
-                onNavigateToVideo = { navController.navigate("video") },
+                onNavigateToCourse = { courseId ->
+                    navController.navigate("course/$courseId")
+                },
                 onNavigateToProfile = { navController.navigate("profile") },
                 onNavigateToHome = { navController.navigate("home") },
                 videoViewModel = videoViewModel
@@ -78,6 +84,10 @@ fun AppNavHost() {
         }
         composable("video") {
             VideoScreen()
+        }
+        composable("course/{courseId}") {backStackEntry ->
+            val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull()
+          //  CourseScreen(courseId = courseId)
         }
     }
 }

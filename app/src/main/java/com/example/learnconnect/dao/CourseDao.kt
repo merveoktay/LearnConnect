@@ -29,10 +29,12 @@ interface CourseDao {
     suspend fun insertUserFavoriteCourse(userFavoriteCourse: UserFavoriteCourse)
 
     @Query("SELECT * FROM courses WHERE course_type_id = :courseTypeId")
-    suspend fun getCoursesByType(courseTypeId: Int): List<Course>
+    suspend fun getAllCoursesByType(courseTypeId: Int): List<Course>
     @Query("SELECT * FROM courses ")
     suspend fun getAllCourse(): List<Course>
 
+    @Query("SELECT * FROM Video")
+    suspend fun getAllVideos(): List<Video>
 
     @Query("SELECT * FROM videos WHERE course_id = :courseId")
     suspend fun getVideosByCourse(courseId: Int): List<Video>

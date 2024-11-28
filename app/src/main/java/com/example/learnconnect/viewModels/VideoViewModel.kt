@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
+import com.example.learnconnect.models.Video
 import com.example.learnconnect.repositories.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -24,6 +25,11 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
     private val _courses = MutableLiveData<List<Course>>()
     val courses: LiveData<List<Course>> get() = _courses
 
+    private val _videos = MutableLiveData<List<Video>>()
+    val videos: LiveData<List<Video>> get() = _videos
+
+    private val _filteredVideos = MediatorLiveData<List<Video>>()
+    val filteredVideos: LiveData<List<Video>> get() = _filteredVideos
 
     private val _searchQuery = MutableLiveData("")
     val searchQuery: LiveData<String> get() = _searchQuery
@@ -33,8 +39,9 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
     val filteredCourses: LiveData<List<Course>> get() = _filteredCourses
 
     init {
-        loadCategories() // Başlangıçta kategorileri yükle
-        loadCourses() // Başlangıçta kursları yükle
+        loadCategories()
+        loadCourses()
+        loadVideos()
     }
 
     fun loadCategories() {
@@ -48,7 +55,6 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
         }
     }
 
-    // Kursları Yükleme
     fun loadCourses() {
         viewModelScope.launch {
             try {
@@ -61,13 +67,23 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
             }
         }
     }
+    fun loadVideos() {
+        viewModelScope.launch {
+            try {
+                courseRepository.initializeAllVideo()
+                val allVideos = courseRepository.getVideos()
+                _videos.value = allVideos
+                filterVideos() // Videolar yüklendiğinde filtreleme yap
+            } catch (e: Exception) {
+                Log.e("VideoViewModel", "Error loading videos: ${e.message}")
+            }
+        }
+    }
 
-    // Arama Sorgusunu Güncelleme
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
     }
 
-    // Kursları Filtreleme
     private fun filterCourses() {
         val query = searchQuery.value.orEmpty()
         val courses = _courses.value.orEmpty()
@@ -75,8 +91,15 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
             course.name.contains(query, ignoreCase = true)
         }
     }
-    // Belirli Bir Kategoriye Ait Kursları Almak
     fun getCoursesByCategory(categoryId: Int): List<Course> {
         return _courses.value?.filter { it.course_type_id == categoryId } ?: emptyList()
+    }
+
+    private fun filterVideos() {
+        val query = searchQuery.value.orEmpty()
+        val videos = _videos.value.orEmpty()
+        _filteredVideos.value = videos.filter { video ->
+            video.title.contains(query, ignoreCase = true)
+        }
     }
 }

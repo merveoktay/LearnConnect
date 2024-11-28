@@ -50,16 +50,20 @@ import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
-fun CoursesScreen(onNavigateToVideo: () -> Unit,onNavigateToProfile: () -> Unit,onNavigateToHome: () -> Unit,videoViewModel: VideoViewModel){
+fun CoursesScreen(
+    onNavigateToCourse: (Int) -> Unit,
+    onNavigateToProfile: () -> Unit,
+    onNavigateToHome: () -> Unit,
+    videoViewModel: VideoViewModel,
+) {
     LaunchedEffect(Unit) {
         videoViewModel.loadCategories()
         videoViewModel.loadCourses()
-    }
-    val searchQuery by videoViewModel.searchQuery.observeAsState("")
 
+    }
     Scaffold(
         topBar = {
-            CoursesTopBar()
+                 CoursesTopBar()
         },
         bottomBar = {
             CoursesBottomBar(onNavigateToProfile, onNavigateToHome)
@@ -67,7 +71,7 @@ fun CoursesScreen(onNavigateToVideo: () -> Unit,onNavigateToProfile: () -> Unit,
         content = { innerPadding ->
             CoursesContent(
                 modifier = Modifier.padding(innerPadding), videoViewModel,
-                onNavigateToHome
+                onNavigateToCourse
             )
         }
     )
@@ -99,8 +103,7 @@ fun CoursesTopBar() {
 fun CoursesContent(
     modifier: Modifier = Modifier,
     videoViewModel: VideoViewModel,
-    onNavigateToHome: () -> Unit,
-
+    onNavigateToCourse:(Int)->Unit
     ) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by videoViewModel.categories.observeAsState(emptyList())
@@ -135,9 +138,10 @@ fun CoursesContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(filteredCourses) { course ->
-                VideoCard(
+                CoursesVideoCard(
                     imageUrl = course.course_image,
-                    courseName = course.name
+                    courseName = course.name,
+                    courseId=course.id,onNavigateToCourse
                 )
             }
         }
@@ -173,7 +177,7 @@ fun CoursesBottomBar(onNavigateToProfile: () -> Unit, onNavigateToHome: () -> Un
                     )
                 },
                 selected = true,
-                onClick = { onNavigateToHome()}
+                onClick = { onNavigateToHome() }
             )
             NavigationBarItem(
                 icon = {
@@ -213,7 +217,7 @@ fun CoursesChip(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun CoursesVideoCard(imageUrl: String, courseName: String) {
+fun CoursesVideoCard(imageUrl: String, courseName: String,courseId:Int,onNavigateToCourse:(Int)->Unit) {
     Card(
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(
@@ -222,7 +226,7 @@ fun CoursesVideoCard(imageUrl: String, courseName: String) {
         modifier = Modifier
             .fillMaxSize(1f)
             .clickable {
-
+                onNavigateToCourse(courseId)
             }
     ) {
         Column {
