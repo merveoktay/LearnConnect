@@ -90,9 +90,17 @@ fun AppNavHost() {
         composable("video") {
             VideoScreen()
         }
-        composable("course/{courseId}") {backStackEntry ->
-            val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull()
-          //  CourseScreen(courseId = courseId)
+        composable("course/{courseId}") { backStackEntry ->
+            val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull() ?: 0
+            val videoViewModel: VideoViewModel = hiltViewModel()
+
+            CourseScreen(
+                viewModel = videoViewModel,
+                courseId = courseId,
+                onFavoriteClick = { /* Favorite işlemini burada tanımlayın */ },
+                onJoinClick = { /* Join işlemini burada tanımlayın */ },
+                isUserEnrolled = false
+            )
         }
     }
 }

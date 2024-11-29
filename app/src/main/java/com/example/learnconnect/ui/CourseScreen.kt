@@ -1,5 +1,6 @@
 package com.example.learnconnect.ui
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -45,23 +46,28 @@ fun CourseScreen(
     onFavoriteClick: () -> Unit,
     onJoinClick: () -> Unit,
     isUserEnrolled: Boolean,
-    courseId: Int
+    courseId: Int,
 ) {
 
-
+Log.d("Course Id", courseId.toString())
     val videos by viewModel.videos.observeAsState(emptyList())
-    val course =viewModel.getCourse(courseId)
+    val course by  viewModel.course.observeAsState()
     LaunchedEffect(courseId) {
         viewModel.loadVideos()
-        viewModel.getVideosForCourse(courseId)
-
+        viewModel.getVideosByCourse(courseId)
     }
+    course?.let { Log.d("Course Data", it.name) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(text = "Video Name", color = colorResource(id = R.color.title_color))
+                    course?.let {
+                        Text(
+                            text = it.name,
+                            color = colorResource(id = R.color.title_color)
+                        )
+                    }
                 },
                 navigationIcon = {
                     Icon(
@@ -77,7 +83,10 @@ fun CourseScreen(
                     Icon(
                         painter = painterResource(id = R.drawable.unfavorite_icon),
                         contentDescription = "Favorite",
-                        modifier = Modifier.clickable { onFavoriteClick() }
+                        modifier = Modifier
+                            .clickable { onFavoriteClick() }
+                            .size(50.dp)
+                            .padding(top = 15.dp)
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -102,7 +111,7 @@ fun CourseScreen(
                 items(videos) { video ->
                     if (course != null) {
                         VideoCard(
-                            imageUrl = course.course_image,
+                            imageUrl = course!!.course_image,
                             videoName = video.title
                         )
                     }

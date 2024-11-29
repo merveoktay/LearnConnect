@@ -24,8 +24,8 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
     private val _courses = MutableLiveData<List<Course>>()
     val courses: LiveData<List<Course>> get() = _courses
 
-    private val _course = MutableLiveData<Course?>()
-    val course: LiveData<Course?> get() = _course
+    private val _course = MutableLiveData<Course>()
+    val course: LiveData<Course> = _course
 
     private val _videos = MutableLiveData<List<Video>>()
     val videos: LiveData<List<Video>> get() = _videos
@@ -102,8 +102,11 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
             _videos.postValue(videoList)
         }
     }
-    fun getVideosByCourse(courseId: Int): List<Video> {
-        return _videos.value?.filter { it.course_id == courseId } ?: emptyList()
+    fun getVideosByCourse(courseId: Int) {
+        viewModelScope.launch {
+            val fetchedCourse = courseRepository.getCourse(courseId)
+            _course.postValue(fetchedCourse)
+        }
     }
     fun getCourse(courseId: Int): Course? {
         return _course.value?.takeIf { it.id == courseId }

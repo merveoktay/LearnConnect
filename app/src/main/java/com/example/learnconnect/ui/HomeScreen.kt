@@ -196,13 +196,13 @@ fun Chip(text: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .clickable { onClick() }
-            .wrapContentSize(), // Adjusts size based on the content (Text)
+            .wrapContentSize(),
         color = Color.LightGray,
         shape = RoundedCornerShape(16.dp)
     ) {
         Box(
-            contentAlignment = Alignment.Center, // Center the content
-            modifier = Modifier.wrapContentSize() // Ensure the Box sizes based on the content
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.wrapContentSize()
         ) {
             Text(
                 text = text,

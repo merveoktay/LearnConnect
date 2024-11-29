@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,15 +64,16 @@ fun CoursesScreen(
     }
     Scaffold(
         topBar = {
-                 CoursesTopBar()
+            CoursesTopBar()
         },
         bottomBar = {
             CoursesBottomBar(onNavigateToProfile, onNavigateToHome)
         },
         content = { innerPadding ->
             CoursesContent(
-                modifier = Modifier.padding(innerPadding), videoViewModel,
-                onNavigateToCourse
+                modifier = Modifier.padding(innerPadding),
+                videoViewModel = videoViewModel,
+                onNavigateToCourse = onNavigateToCourse
             )
         }
     )
@@ -103,8 +105,8 @@ fun CoursesTopBar() {
 fun CoursesContent(
     modifier: Modifier = Modifier,
     videoViewModel: VideoViewModel,
-    onNavigateToCourse:(Int)->Unit
-    ) {
+    onNavigateToCourse: (Int) -> Unit,
+) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by videoViewModel.categories.observeAsState(emptyList())
     val courses by videoViewModel.courses.observeAsState(emptyList())
@@ -121,9 +123,15 @@ fun CoursesContent(
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item {
+               CoursesChip(
+                    text = "All Courses",
+                    onClick = { selectedCategory = null }
+                )
+            }
 
             items(categories) { category ->
-                Chip(
+                CoursesChip(
                     text = category.name,
                     onClick = { selectedCategory = category.id }
                 )
@@ -141,7 +149,7 @@ fun CoursesContent(
                 CoursesVideoCard(
                     imageUrl = course.course_image,
                     courseName = course.name,
-                    courseId=course.id,onNavigateToCourse
+                    courseId = course.id, onNavigateToCourse
                 )
             }
         }
@@ -217,14 +225,19 @@ fun CoursesChip(text: String, onClick: () -> Unit) {
 }
 
 @Composable
-fun CoursesVideoCard(imageUrl: String, courseName: String,courseId:Int,onNavigateToCourse:(Int)->Unit) {
+fun CoursesVideoCard(
+    imageUrl: String,
+    courseName: String,
+    courseId: Int,
+    onNavigateToCourse: (Int) -> Unit,
+) {
     Card(
         shape = RoundedCornerShape(25.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.dp
         ),
         modifier = Modifier
-            .fillMaxSize(1f)
+            .fillMaxWidth()
             .clickable {
                 onNavigateToCourse(courseId)
             }
@@ -236,7 +249,7 @@ fun CoursesVideoCard(imageUrl: String, courseName: String,courseId:Int,onNavigat
                 modifier = Modifier
                     .padding(top = 10.dp)
                     .fillMaxWidth()  // Görselin genişliğini kartla uyumlu yap
-                    .height(150.dp)
+                    .aspectRatio(16 / 9f)
                     .clip(RoundedCornerShape(32.dp)), // Yüksekliği belirleyin
             )
             Text(
