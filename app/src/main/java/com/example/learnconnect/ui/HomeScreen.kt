@@ -103,7 +103,7 @@ fun HomeContent(
     videoViewModel: VideoViewModel,
     onNavigateToCourse: (Int) -> Unit,
 ) {
-    var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
+    var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by videoViewModel.categories.observeAsState(emptyList())
     val courses by videoViewModel.courses.observeAsState(emptyList())
 

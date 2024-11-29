@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -28,6 +29,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -104,15 +108,15 @@ Log.d("Course Id", courseId.toString())
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
-                items(videos) { video ->
-                    if (course != null) {
+                items(videos.filter { it.course_id == courseId }) { video -> // Filtreleme işlemi burada yapılır
+                    course?.let {
                         VideoCard(
                             imageUrl = course!!.course_image,
-                            videoName = video.title
+                            videoName = it.name,
                         )
                     }
                 }
