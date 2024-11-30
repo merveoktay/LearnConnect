@@ -2,18 +2,25 @@
 LearnConnect, modern bir video tabanlı eğitim platformudur. Kullanıcıların kurslara kaydolabildiği hem de ders videolarını izleyebildiği bir uygulamadır. Kullanıcılar kategorilere göre kursları listeleyebilir, isterlerse beğendikleri kursları favorilerine ekleyebilmektedirler.
 ---
 
-## Kuallanıcı Giriş Ve Kayıt Ekran Görüntüleri
+##  Light Theme Ekran Görüntüleri
 <p float="left">
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/SplashScreen.png width="28%" />
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LoginScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LoginScreen%20Entry.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/RegisterScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeHomeScreen.png width="28%"  />
+   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeMyCourseScreen.png  width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeProfileScreen.png width="28%" />
+  
 </p>
 
-## HomeScreen ve MyCoursesScreen Ekran Görüntüleri
+## Dark Theme Ekran Görüntüleri
 <p float="left">
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/HomeScreen.png width="28%" />
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/MyCoursesScreen.png width="28%" />
+    <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeSplashScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeLoginScreen.png  width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeRegisterScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeHomeScreen.png width="28%"  />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeMyCourseScreen.png width="28%"  />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeMyCourseScreen.png  width="28%" />
 </p>
 ---
 
