@@ -2,9 +2,11 @@ package com.example.learnconnect.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.learnconnect.ui.CourseScreen
 import com.example.learnconnect.ui.CoursesScreen
 import com.example.learnconnect.ui.FavoriteScreen
@@ -15,8 +17,8 @@ import com.example.learnconnect.ui.LoginScreen
 import com.example.learnconnect.ui.ProfileScreen
 import com.example.learnconnect.ui.RegisterScreen
 import com.example.learnconnect.ui.SplashScreen
-import com.example.learnconnect.ui.VideoScreen
-import com.example.learnconnect.viewModels.VideoViewModel
+import com.example.learnconnect.ui.VideoPlayerScreen
+import com.example.learnconnect.viewModels.CourseViewModel
 
 @Composable
 fun AppNavHost() {
@@ -27,7 +29,7 @@ fun AppNavHost() {
         startDestination = "splash"
     ) {
         composable("splash") {
-            SplashScreen(    onNavigateToLogin = { navController.navigate("login") }
+            SplashScreen(onNavigateToLogin = { navController.navigate("login") }
             )
         }
         composable("login") {
@@ -50,34 +52,34 @@ fun AppNavHost() {
             )
         }
         composable("home") {
-            val videoViewModel: VideoViewModel = hiltViewModel()
+            val courseViewModel: CourseViewModel = hiltViewModel()
             HomeScreen(
                 onNavigateToCourse = { courseId ->
                     navController.navigate("course/$courseId")
                 },
                 onNavigateToProfile = { navController.navigate("profile") },
                 onNavigateToCourses = { navController.navigate("courses") },
-                videoViewModel = videoViewModel
+                courseViewModel = courseViewModel
             )
         }
         composable("favorite") {
-            val videoViewModel: VideoViewModel = hiltViewModel()
+            val courseViewModel: CourseViewModel = hiltViewModel()
             FavoriteScreen(
                 onNavigateToCourses = { navController.navigate("courses") },
                 onNavigateToProfile = { navController.navigate("profile") },
-                videoViewModel = videoViewModel
+                courseViewModel = courseViewModel
             )
         }
 
         composable("courses") {
-            val videoViewModel: VideoViewModel = hiltViewModel()
+            val courseViewModel: CourseViewModel = hiltViewModel()
             CoursesScreen(
                 onNavigateToCourse = { courseId ->
                     navController.navigate("course/$courseId")
                 },
                 onNavigateToProfile = { navController.navigate("profile") },
                 onNavigateToHome = { navController.navigate("home") },
-                videoViewModel = videoViewModel
+                courseViewModel = courseViewModel
             )
         }
         composable("profile") {
@@ -87,18 +89,26 @@ fun AppNavHost() {
                 onNavigateToCourses = { navController.navigate("courses") }
             )
         }
-        composable("video") {
-            VideoScreen()
+        composable(
+            route = "video/{videoId}"
+        ) { backStackEntry ->
+            val courseViewModel: CourseViewModel = hiltViewModel()
+            val videoId = backStackEntry.arguments?.getString("videoId")?.toIntOrNull() ?: 0
+            VideoPlayerScreen(videoId = videoId, navController = navController,courseViewModel)
         }
         composable("course/{courseId}") { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull() ?: 0
-            val videoViewModel: VideoViewModel = hiltViewModel()
-
+            val courseViewModel: CourseViewModel = hiltViewModel()
+            val loginViewModel: LoginViewModel = hiltViewModel()
             CourseScreen(
-                viewModel = videoViewModel,
+                viewModel = courseViewModel,
+                onNavigateToVideoPlayer = { videoId ->
+                    navController.navigate("video/$videoId")
+                },
+                loginViewModel = loginViewModel,
                 courseId = courseId,
                 onFavoriteClick = { /* Favorite işlemini burada tanımlayın */ },
-                onJoinClick = { /* Join işlemini burada tanımlayın */ },
+                navController = navController,
                 isUserEnrolled = false
             )
         }

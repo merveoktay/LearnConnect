@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -41,26 +41,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.learnconnect.R
-import com.example.learnconnect.viewModels.VideoViewModel
+import com.example.learnconnect.viewModels.CourseViewModel
 
 @Composable
 fun CoursesScreen(
     onNavigateToCourse: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
     onNavigateToHome: () -> Unit,
-    videoViewModel: VideoViewModel,
+    courseViewModel: CourseViewModel,
 ) {
     LaunchedEffect(Unit) {
-        videoViewModel.loadCategories()
-        videoViewModel.loadCourses()
-
+        courseViewModel.loadCategories()
+        courseViewModel.loadCourses()
     }
     Scaffold(
         topBar = {
@@ -72,7 +69,7 @@ fun CoursesScreen(
         content = { innerPadding ->
             CoursesContent(
                 modifier = Modifier.padding(innerPadding),
-                videoViewModel = videoViewModel,
+                courseViewModel = courseViewModel,
                 onNavigateToCourse = onNavigateToCourse
             )
         }
@@ -83,8 +80,9 @@ fun CoursesScreen(
 @Composable
 fun CoursesTopBar() {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
-        title = {
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.secondary
+        ),        title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.xsmall_brand_logo),
@@ -92,7 +90,7 @@ fun CoursesTopBar() {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "My Courses", color = colorResource(id = R.color.title_color))
+                Text(text = "My Courses", color = MaterialTheme.colorScheme.onSecondary) // Use onSecondary color
             }
         },
         actions = {
@@ -104,13 +102,12 @@ fun CoursesTopBar() {
 @Composable
 fun CoursesContent(
     modifier: Modifier = Modifier,
-    videoViewModel: VideoViewModel,
+    courseViewModel: CourseViewModel,
     onNavigateToCourse: (Int) -> Unit,
 ) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) }
-    val categories by videoViewModel.categories.observeAsState(emptyList())
-    val courses by videoViewModel.courses.observeAsState(emptyList())
-
+    val categories by courseViewModel.categories.observeAsState(emptyList())
+    val courses by courseViewModel.courses.observeAsState(emptyList())
 
     Column(
         modifier = modifier
@@ -124,7 +121,7 @@ fun CoursesContent(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             item {
-               CoursesChip(
+                CoursesChip(
                     text = "All Courses",
                     onClick = { selectedCategory = null }
                 )
@@ -138,7 +135,7 @@ fun CoursesContent(
             }
         }
         val filteredCourses = selectedCategory?.let { categoryId ->
-            videoViewModel.getCoursesByCategory(categoryId)
+            courseViewModel.getCoursesByCategory(categoryId)
         } ?: courses
         LazyColumn(
             modifier = Modifier
@@ -159,11 +156,11 @@ fun CoursesContent(
 @Composable
 fun CoursesBottomBar(onNavigateToProfile: () -> Unit, onNavigateToHome: () -> Unit) {
     BottomAppBar(
-        containerColor = colorResource(id = R.color.hint_color)
+        containerColor = MaterialTheme.colorScheme.secondary // Use secondary color
     ) {
         NavigationBar(
-            containerColor = colorResource(id = R.color.hint_color),
-            contentColor = colorResource(id = R.color.title_color)
+            containerColor = MaterialTheme.colorScheme.secondary, // Use secondary color
+            contentColor = MaterialTheme.colorScheme.onSecondary // Use onSecondary color
         ) {
             NavigationBarItem(
                 icon = {
@@ -207,18 +204,18 @@ fun CoursesChip(text: String, onClick: () -> Unit) {
     Surface(
         modifier = Modifier
             .clickable { onClick() }
-            .wrapContentSize(), // Adjusts size based on the content (Text)
-        color = Color.LightGray,
+            .wrapContentSize(),
+        color = MaterialTheme.colorScheme.secondary,
         shape = RoundedCornerShape(16.dp)
     ) {
         Box(
-            contentAlignment = Alignment.Center, // Center the content
-            modifier = Modifier.wrapContentSize() // Ensure the Box sizes based on the content
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.wrapContentSize()
         ) {
             Text(
                 text = text,
                 modifier = Modifier.padding(16.dp),
-                color = colorResource(id = R.color.title_color)
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }
@@ -232,10 +229,8 @@ fun CoursesVideoCard(
     onNavigateToCourse: (Int) -> Unit,
 ) {
     Card(
-        shape = RoundedCornerShape(25.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
@@ -244,20 +239,19 @@ fun CoursesVideoCard(
     ) {
         Column {
             AsyncImage(
-                model = imageUrl,  // Görsel URL'si
+                model = imageUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(top = 10.dp)
-                    .fillMaxWidth()  // Görselin genişliğini kartla uyumlu yap
-                    .aspectRatio(16 / 9f)
-                    .clip(RoundedCornerShape(32.dp)), // Yüksekliği belirleyin
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
             )
             Text(
                 text = courseName,
                 modifier = Modifier
                     .padding(start = 20.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
                     .align(Alignment.CenterHorizontally),
-                color = colorResource(id = R.color.title_color)
+                color = MaterialTheme.colorScheme.onSurface // Use onSurface color
             )
         }
     }

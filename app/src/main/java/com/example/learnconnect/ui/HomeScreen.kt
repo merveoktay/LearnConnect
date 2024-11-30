@@ -24,6 +24,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -40,24 +41,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.learnconnect.R
-import com.example.learnconnect.viewModels.VideoViewModel
+import com.example.learnconnect.viewModels.CourseViewModel
 
 @Composable
 fun HomeScreen(
     onNavigateToCourse: (Int) -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToCourses: () -> Unit, videoViewModel: VideoViewModel,
+    onNavigateToCourses: () -> Unit,
+    courseViewModel: CourseViewModel,
 ) {
     LaunchedEffect(Unit) {
-        videoViewModel.loadCategories()
-        videoViewModel.loadCourses()
+        courseViewModel.loadCategories()
+        courseViewModel.loadCourses()
     }
     Scaffold(
         topBar = {
@@ -68,7 +68,8 @@ fun HomeScreen(
         },
         content = { innerPadding ->
             HomeContent(
-                modifier = Modifier.padding(innerPadding), videoViewModel,
+                modifier = Modifier.padding(innerPadding),
+                courseViewModel,
                 onNavigateToCourse
             )
         }
@@ -79,7 +80,9 @@ fun HomeScreen(
 @Composable
 fun HomeTopBar() {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.secondary
+        ),
         title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
@@ -88,25 +91,25 @@ fun HomeTopBar() {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "LearnConnect", color = colorResource(id = R.color.title_color))
+                Text(
+                    text = "LearnConnect",
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
             }
         },
-        actions = {
-
-        }
+        actions = {}
     )
 }
 
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
-    videoViewModel: VideoViewModel,
+    courseViewModel: CourseViewModel,
     onNavigateToCourse: (Int) -> Unit,
 ) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) }
-    val categories by videoViewModel.categories.observeAsState(emptyList())
-    val courses by videoViewModel.courses.observeAsState(emptyList())
-
+    val categories by courseViewModel.categories.observeAsState(emptyList())
+    val courses by courseViewModel.courses.observeAsState(emptyList())
 
     Column(
         modifier = modifier
@@ -119,7 +122,12 @@ fun HomeContent(
                 .padding(bottom = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-
+            item {
+                Chip(
+                    text = "All Courses",
+                    onClick = { selectedCategory = null }
+                )
+            }
             items(categories) { category ->
                 Chip(
                     text = category.name,
@@ -128,7 +136,7 @@ fun HomeContent(
             }
         }
         val filteredCourses = selectedCategory?.let { categoryId ->
-            videoViewModel.getCoursesByCategory(categoryId)
+            courseViewModel.getCoursesByCategory(categoryId)
         } ?: courses
         LazyColumn(
             modifier = Modifier
@@ -138,7 +146,9 @@ fun HomeContent(
             items(filteredCourses) { course ->
                 VideoCard(
                     imageUrl = course.course_image,
-                    courseName = course.name, onNavigateToCourse, course.id
+                    courseName = course.name,
+                    onNavigateToCourse,
+                    course.id
                 )
             }
         }
@@ -148,11 +158,11 @@ fun HomeContent(
 @Composable
 fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
     BottomAppBar(
-        containerColor = colorResource(id = R.color.hint_color)
+        containerColor = MaterialTheme.colorScheme.secondary
     ) {
         NavigationBar(
-            containerColor = colorResource(id = R.color.hint_color),
-            contentColor = colorResource(id = R.color.title_color)
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
         ) {
             NavigationBarItem(
                 icon = {
@@ -197,7 +207,7 @@ fun Chip(text: String, onClick: () -> Unit) {
         modifier = Modifier
             .clickable { onClick() }
             .wrapContentSize(),
-        color = Color.LightGray,
+        color = MaterialTheme.colorScheme.secondary,
         shape = RoundedCornerShape(16.dp)
     ) {
         Box(
@@ -207,7 +217,7 @@ fun Chip(text: String, onClick: () -> Unit) {
             Text(
                 text = text,
                 modifier = Modifier.padding(16.dp),
-                color = colorResource(id = R.color.title_color)
+                color = MaterialTheme.colorScheme.onSecondary
             )
         }
     }
@@ -221,35 +231,30 @@ fun VideoCard(
     courseId: Int,
 ) {
     Card(
-        shape = RoundedCornerShape(25.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 4.dp
-        ),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
-            .fillMaxSize(1f)
+            .fillMaxWidth()
             .clickable {
                 onNavigateToCourse(courseId)
             }
     ) {
         Column {
             AsyncImage(
-                model = imageUrl,  // Görsel URL'si
+                model = imageUrl,
                 contentDescription = null,
                 modifier = Modifier
-                    .padding(top = 10.dp)
-                    .fillMaxWidth()  // Görselin genişliğini kartla uyumlu yap
-                    .height(150.dp)
-                    .clip(RoundedCornerShape(32.dp)), // Yüksekliği belirleyin
+                    .fillMaxWidth()
+                    .height(200.dp),
+                contentScale = ContentScale.Crop
             )
             Text(
                 text = courseName,
                 modifier = Modifier
                     .padding(start = 20.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
                     .align(Alignment.CenterHorizontally),
-                color = colorResource(id = R.color.title_color)
+                color = MaterialTheme.colorScheme.onSurface // Use onSurface color
             )
         }
     }
 }
-
-

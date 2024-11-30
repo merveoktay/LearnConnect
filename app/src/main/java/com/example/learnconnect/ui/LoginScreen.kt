@@ -1,12 +1,13 @@
 package com.example.learnconnect.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -14,7 +15,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -34,16 +34,17 @@ fun LoginScreen(
 ) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var buttonColor = colorResource(id = R.color.hint_color)
+    var buttonColor = MaterialTheme.colorScheme.primary
     var clickable = false
     var isPasswordVisible by remember { mutableStateOf(false) }
-    var showErrorDialog by remember { mutableStateOf(false) } // State to control dialog visibility
-    var errorMessage by remember { mutableStateOf("") } // State to hold error message
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
+    val userId by viewModel.id.collectAsState()
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.surface_color)) // Arka plan rengi
+            .background(MaterialTheme.colorScheme.background)
     ) {
 
         Column(
@@ -55,7 +56,7 @@ fun LoginScreen(
         ) {
 
             Image(
-                painter = painterResource(id = R.drawable.brand_logo_light_small), // Logonuzun kaynak dosyası
+                painter = painterResource(id = R.drawable.brand_logo_light_small),
                 contentDescription = "Logo",
                 modifier = Modifier.size(60.dp)
             )
@@ -67,7 +68,7 @@ fun LoginScreen(
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
-                    color = colorResource(id = R.color.title_color)
+                    color = MaterialTheme.colorScheme.onSecondary
                 )
             )
 
@@ -79,7 +80,7 @@ fun LoginScreen(
                     email = newEmail
                     viewModel.onEmailChange(newEmail)
                 },
-                label = { Text("Email", color = colorResource(id = R.color.hint_color)) },
+                label = { Text("Email", color = MaterialTheme.colorScheme.secondary) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
@@ -93,7 +94,7 @@ fun LoginScreen(
                     password = newPassword
                     viewModel.onPasswordChange(newPassword)
                 },
-                label = { Text("Password", color = colorResource(id = R.color.hint_color)) },
+                label = { Text("Password", color = MaterialTheme.colorScheme.secondary) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
@@ -113,11 +114,12 @@ fun LoginScreen(
             )
 
             Spacer(modifier = Modifier.height(50.dp))
+
             if (email.isNotEmpty() && password.isNotEmpty()) {
-                buttonColor = colorResource(id = R.color.brand_color)
+                buttonColor = MaterialTheme.colorScheme.primary
                 clickable = true
             } else {
-                buttonColor = colorResource(id = R.color.hint_color)
+                buttonColor = MaterialTheme.colorScheme.secondary
                 clickable = false
             }
 
@@ -126,6 +128,7 @@ fun LoginScreen(
                     if (clickable) {
                         viewModel.login(
                             onSuccess = {
+                                Log.d("USER ID", userId.toString())
                                 onNavigateToHome()
                             },
                             onError = {
@@ -155,17 +158,16 @@ fun LoginScreen(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
-
             ) {
                 Text(
                     text = "Don't have an account? ",
-                    color = colorResource(id = R.color.title_color)
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 TextButton(onClick = { onNavigateToRegister() }) {
                     Text(
                         text = "Register Now",
                         style = TextStyle(
-                            color = colorResource(id = R.color.brand_color),
+                            color = MaterialTheme.colorScheme.primary,
                             fontWeight = FontWeight.Bold
                         )
                     )
@@ -174,15 +176,15 @@ fun LoginScreen(
         }
     }
 
-    // Show error dialog if login fails
     if (showErrorDialog) {
         ErrorDialog(errorMessage = errorMessage) {
-            showErrorDialog = false // Dismiss the dialog
+            showErrorDialog = false
         }
     }
 }
+
 @Composable
-fun ErrorDialog( errorMessage: String,onDismiss: () -> Unit) {
+fun ErrorDialog(errorMessage: String, onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
@@ -198,4 +200,3 @@ fun ErrorDialog( errorMessage: String,onDismiss: () -> Unit) {
         }
     )
 }
-

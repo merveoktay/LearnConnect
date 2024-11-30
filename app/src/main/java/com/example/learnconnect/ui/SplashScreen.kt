@@ -13,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -24,10 +23,12 @@ import com.example.learnconnect.R
 fun SplashScreen(
     onNavigateToLogin: () -> Unit,
 ) {
+    val colors = MaterialTheme.colorScheme
+
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.surface_color))
+            .background(colors.surface)
     ) {
         // Logo Section
         Column(
@@ -37,7 +38,6 @@ fun SplashScreen(
                 .align(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Image(
                 painter = painterResource(id = R.drawable.brand_logo_light_big),
                 contentDescription = "Logo",
@@ -51,10 +51,9 @@ fun SplashScreen(
                 style = MaterialTheme.typography.bodyLarge.copy(
                     fontSize = 32.sp,
                     fontWeight = FontWeight.SemiBold,
-                    color = colorResource(id = R.color.title_color)
+                    color = colors.onSurface
                 )
             )
-
         }
         IconButton(
             onClick = {
@@ -68,11 +67,9 @@ fun SplashScreen(
             Icon(
                 imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = "Next",
-                tint = colorResource(id = R.color.title_color),
+                tint = colors.onSurface,
                 modifier = Modifier.size(80.dp)
             )
         }
-
-        }
     }
-
+}

@@ -19,5 +19,5 @@ data class Video(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val title: String,
     val url: String,
-    val course_id: Int // Foreign key to Course
+    val course_id: Int
 )
