@@ -33,11 +33,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.models.Video
 
@@ -52,9 +54,9 @@ fun CourseScreen(
     onNavigateToVideoPlayer: (Int) -> Unit,
     onFavoriteClick: () -> Unit,
     navController: NavController,
-    isUserEnrolled: Boolean,
     courseId: Int,
 ) {
+
     Log.d("Course Id", courseId.toString())
     val videos by viewModel.videos.observeAsState(emptyList())
     val course by viewModel.course.observeAsState()
@@ -63,8 +65,10 @@ fun CourseScreen(
         viewModel.getVideosByCourse(courseId)
     }
     course?.let { Log.d("Course Data", it.name) }
+    val userId = PreferencesManager.getUserId(context = LocalContext.current)
+    val isUserEnrolled by viewModel.result.observeAsState(initial = false)
+     Log.d("IS ENROLL", isUserEnrolled.toString())
 
-    val userId = loginViewModel.getUserId()
     Log.d("USER ID", userId.toString())
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -89,6 +93,19 @@ fun CourseScreen(
                     }
                 },
                 actions = {
+                    if(!isUserEnrolled!!) {
+                        IconButton(onClick = {
+                            viewModel.saveUserCourse(userId = userId, courseId = courseId)
+                        }) {
+                            Icon(
+                                painter = painterResource(id =  R.drawable.plus_icon),
+                                contentDescription = "Back",
+                                tint = MaterialTheme.colorScheme.onSecondary,
+                                modifier = Modifier.size(60.dp)
+                            )
+                        }
+
+                    }
                     Icon(
                         painter = painterResource(id = R.drawable.unfavorite_icon),
                         contentDescription = "Favorite",
@@ -96,12 +113,11 @@ fun CourseScreen(
                             .clickable { onFavoriteClick() }
                             .size(50.dp)
                             .padding(top = 15.dp),
-                        tint = MaterialTheme.colorScheme.onSecondary
+                        tint =  MaterialTheme.colorScheme.onSecondary
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface,
-                    titleContentColor = MaterialTheme.colorScheme.onSurface
+                        containerColor = MaterialTheme.colorScheme.secondary
                 )
             )
         }
@@ -124,26 +140,13 @@ fun CourseScreen(
                             video = video,
                             onNavigateToVideoPlayer = onNavigateToVideoPlayer
                         )
+
+
+
                     }
                 }
             }
-
-            if (!isUserEnrolled) {
-                Button(
-                    onClick = { viewModel.saveUserCourse(userId = userId, courseId = courseId) },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 16.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary
-                    )
-                ) {
-                    Text(
-                        text = "Join The Course",
-                        color = MaterialTheme.colorScheme.onPrimary
-                    )
-                }
-            }
+            Log.d("isssenrolled", isUserEnrolled.toString())
         }
     }
 }
@@ -154,12 +157,17 @@ fun VideoCard(
     video: Video,
     onNavigateToVideoPlayer: (Int) -> Unit,
 ) {
+    val context =LocalContext.current
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onNavigateToVideoPlayer(video.id) }
+            .clickable {
+                PreferencesManager.clearVideoLink(context)
+                PreferencesManager.saveVideoLink(context = context, video.url)
+                onNavigateToVideoPlayer(video.id)
+            }
     ) {
         Column {
             AsyncImage(

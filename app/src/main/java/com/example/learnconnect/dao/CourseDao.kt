@@ -24,8 +24,7 @@ interface CourseDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUserCourse(userCourse: UserCourse)
-
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUserFavoriteCourse(userFavoriteCourse: UserFavoriteCourse)
 
     @Query("SELECT * FROM courses WHERE course_type_id = :courseTypeId")

@@ -184,9 +184,7 @@ fun DarkModeToggleScreen() {
 
     var isDarkTheme by remember { mutableStateOf(themePreferences.getDarkModeState()) }
 
-    LaunchedEffect(isDarkTheme) {
-        themePreferences.saveDarkModeState(isDarkTheme)
-    }
+
     LearnConnectTheme(isDarkTheme = isDarkTheme) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -222,6 +220,9 @@ fun DarkModeToggleScreen() {
                 fontSize = 30.sp
             )
         }
+    }
+    LaunchedEffect(isDarkTheme) {
+        themePreferences.saveDarkModeState(isDarkTheme)
     }
 }
 

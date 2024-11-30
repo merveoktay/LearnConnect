@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -23,6 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.LoginViewModel
 
@@ -40,7 +42,7 @@ fun LoginScreen(
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
     val userId by viewModel.id.collectAsState()
-
+    val context =LocalContext.current
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -128,7 +130,6 @@ fun LoginScreen(
                     if (clickable) {
                         viewModel.login(
                             onSuccess = {
-                                Log.d("USER ID", userId.toString())
                                 onNavigateToHome()
                             },
                             onError = {
@@ -181,6 +182,12 @@ fun LoginScreen(
             showErrorDialog = false
         }
     }
+    if(viewModel.isResultTrue()){
+        Log.d("RESULT DEGERI", viewModel.isResultTrue().toString())
+        PreferencesManager.saveUserId(context = context, userId = userId)
+    }
+
+
 }
 
 @Composable

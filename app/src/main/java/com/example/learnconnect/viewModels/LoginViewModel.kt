@@ -22,7 +22,7 @@ class LoginViewModel @Inject constructor(private val repository: UserRepository)
 
     private val _password = MutableStateFlow("")
     val password: StateFlow<String> = _password
-
+    var result:Boolean=false
     fun onEmailChange(newEmail: String) {
         _email.value = newEmail
     }
@@ -36,7 +36,7 @@ class LoginViewModel @Inject constructor(private val repository: UserRepository)
         onError: () -> Unit,
     ) {
         viewModelScope.launch {
-            val result = repository.loginUser(email.value, password.value)
+             result = repository.loginUser(email.value, password.value)
 
             if (result) {
 
@@ -50,10 +50,14 @@ class LoginViewModel @Inject constructor(private val repository: UserRepository)
             }
         }
     }
+    fun isResultTrue():Boolean{
+        return result
+    }
 
     fun getUserId(): Int {
         Log.d("KULLANICI normal olan ID Si", _id.value.toString())
-        return _id.value
+        val userid=_id.value
+        return userid
     }
 
 

@@ -6,6 +6,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
 import com.example.learnconnect.models.Video
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class CourseViewModel @Inject constructor(private val courseRepository: CourseRepository) : ViewModel() {
+class CourseViewModel @Inject constructor(private val courseRepository: CourseRepository) :
+    ViewModel() {
 
     private val _categories = MutableLiveData<List<CourseType>>()
     val categories: LiveData<List<CourseType>> get() = _categories
@@ -32,6 +34,8 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _video = MutableLiveData<Video>()
     val video: LiveData<Video> get() = _video
+    private val _result = MutableLiveData<Boolean>()
+    val result: LiveData<Boolean> get() = _result
 
     private val _filteredVideos = MediatorLiveData<List<Video>>()
     val filteredVideos: LiveData<List<Video>> get() = _filteredVideos
@@ -44,6 +48,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _filteredCourses = MutableLiveData<List<Course>>()
     val filteredCourses: LiveData<List<Course>> get() = _filteredCourses
+
 
     init {
         loadCategories()
@@ -74,6 +79,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
             }
         }
     }
+
     fun loadVideos() {
         viewModelScope.launch {
             try {
@@ -98,21 +104,25 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
             course.name.contains(query, ignoreCase = true)
         }
     }
+
     fun getCoursesByCategory(categoryId: Int): List<Course> {
         return _courses.value?.filter { it.course_type_id == categoryId } ?: emptyList()
     }
+
     fun getVideosForCourse(courseId: Int) {
         viewModelScope.launch {
             val videoList = courseRepository.getVideosByCourseId(courseId)
             _videos.postValue(videoList)
         }
     }
+
     fun getVideosByCourse(courseId: Int) {
         viewModelScope.launch {
             val fetchedCourse = courseRepository.getCourse(courseId)
             _course.postValue(fetchedCourse)
         }
     }
+
     fun getCourse(courseId: Int): Course? {
         return _course.value?.takeIf { it.id == courseId }
     }
@@ -124,20 +134,27 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
             video.title.contains(query, ignoreCase = true)
         }
     }
-    fun saveUserCourse(courseId: Int, userId: Int) {
+
+    fun saveUserCourse( userId: Int,courseId: Int) {
         viewModelScope.launch {
             try {
 
-                courseRepository.saveUserCourse( userId,courseId)
+                courseRepository.saveUserCourse(userId, courseId)
                 _userCourseSaved.postValue(true)
             } catch (e: Exception) {
                 _userCourseSaved.postValue(false)
             }
         }
     }
-    suspend fun isUserEnrolled(userId: Int, courseId: Int):Boolean {
-        return courseRepository.isUserEnrolled(userId, courseId)
+
+    fun isUserEnrolled(userId: Int, courseId: Int){
+        viewModelScope.launch {
+            _result.value = courseRepository.isUserEnrolled(userId, courseId)
+
+        }
     }
+
+
     fun getVideoDetails(videoId: Int): LiveData<Video> {
         viewModelScope.launch {
             val fetchedVideo = courseRepository.getVideoById(videoId)

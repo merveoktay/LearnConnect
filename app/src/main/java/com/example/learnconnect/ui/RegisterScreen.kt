@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -19,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +48,8 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
     var buttonColor = MaterialTheme.colorScheme.secondary
     var clickable = false
     var isPasswordVisible by remember { mutableStateOf(false) }
+    var showErrorDialog by remember { mutableStateOf(false) }
+    var errorMessage by remember { mutableStateOf("") }
 
     Box(
         modifier = Modifier
@@ -54,10 +58,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
     ) {
 
         IconButton(onClick = {
-            viewModel.register(
-                onSuccess = { onNavigateToLogin() },
-                onError = { errorMessage -> println(errorMessage) }
-            )
+
         }) {
 
             Icon(
@@ -153,8 +154,13 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                 onClick = {
                     if (clickable) {
                         viewModel.register(
-                            onSuccess = { onNavigateToLogin() },
-                            onError = { errorMessage -> println(errorMessage) }
+                            username=username,
+                            email=email,
+                            password=password,
+                            onSuccess= { onNavigateToLogin() },
+                            onError= {  errorMessage = "User's email address is already exists."
+                                showErrorDialog = true }
+
                         )
                     }
                 },
@@ -191,5 +197,27 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
             Text(text = "of the Learn Connect", color = MaterialTheme.colorScheme.onBackground)
         }
     }
+    if (showErrorDialog) {
+        RegisterErrorDialog(errorMessage = errorMessage) {
+            showErrorDialog = false
+        }
+    }
+}
+@Composable
+fun RegisterErrorDialog(errorMessage: String, onDismiss: () -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "Login Failed")
+        },
+        text = {
+            Text(text = errorMessage)
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(text = "OK")
+            }
+        }
+    )
 }
 

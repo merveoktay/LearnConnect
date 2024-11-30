@@ -90,7 +90,7 @@ fun CoursesTopBar() {
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "My Courses", color = MaterialTheme.colorScheme.onSecondary) // Use onSecondary color
+                Text(text = "My Courses", color = MaterialTheme.colorScheme.onSecondary)
             }
         },
         actions = {

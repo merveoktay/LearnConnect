@@ -16,7 +16,7 @@ import com.example.learnconnect.models.Video
 
 @Database(
     entities = [User::class, CourseType::class, Course::class, Video::class, UserCourse::class, UserFavoriteCourse::class],
-    version = 5,
+    version = 6,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase(){

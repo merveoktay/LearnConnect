@@ -24,10 +24,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.net.toUri
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
+import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.viewModels.CourseViewModel
+import okhttp3.HttpUrl.Companion.toHttpUrl
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,10 +43,11 @@ fun VideoPlayerScreen(
     val exoPlayer = remember(context) { ExoPlayer.Builder(context).build() }
 
     val video by courseViewModel.video.observeAsState()
-    Log.d("urlll için id", video?.id.toString())
+    Log.d("urlll için id", PreferencesManager.getVideoLink(context))
+    val  url=PreferencesManager.getVideoLink(context).toUri()
     Log.d("urlll urlll", video?.url.toString())
     LaunchedEffect(Unit) {
-        courseViewModel.getVideoDetails(videoId = 123)  // Örnek ID
+        courseViewModel.getVideoDetails(videoId = 123)
     }
 
     Scaffold(
@@ -71,7 +75,7 @@ fun VideoPlayerScreen(
                     }
                 },
                 update = { playerView ->
-                    val mediaItem = MediaItem.fromUri(video?.url ?: "")
+                    val mediaItem = MediaItem.fromUri(url)
                     exoPlayer.setMediaItem(mediaItem)
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
