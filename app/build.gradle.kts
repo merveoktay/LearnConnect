@@ -86,7 +86,7 @@ dependencies {
     implementation ("io.coil-kt:coil-compose:2.5.0")
 
     implementation ("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.1.0")
-
+    testImplementation ("com.google.truth:truth:1.4.4")
     testImplementation ("org.mockito.kotlin:mockito-kotlin:4.1.0")
     testImplementation ("org.mockito:mockito-core:4.11.0")
     testImplementation ("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
@@ -104,6 +104,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
+    androidTestImplementation ("com.google.truth:truth:1.4.4")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

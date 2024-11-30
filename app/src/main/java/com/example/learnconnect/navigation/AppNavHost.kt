@@ -109,7 +109,6 @@ fun AppNavHost() {
                 courseId = courseId,
                 onFavoriteClick = { /* Favorite işlemini burada tanımlayın */ },
                 navController = navController,
-                isUserEnrolled = false
             )
         }
     }
