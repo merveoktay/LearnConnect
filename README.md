@@ -9,6 +9,7 @@ LearnConnect, modern bir video tabanlı eğitim platformudur. Kullanıcıların
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/RegisterScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeHomeScreen.png width="28%"  />
    <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeMyCourseScreen.png  width="28%" />
+    <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeProfileScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeProfileScreen.png width="28%" />
   
 </p>
@@ -20,6 +21,7 @@ LearnConnect, modern bir video tabanlı eğitim platformudur. Kullanıcıların
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeRegisterScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeHomeScreen.png width="28%"  />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeMyCourseScreen.png width="28%"  />
+    <img src=hhttps://github.com/merveoktay/LearnConnect/blob/Video/LightThemeCourseScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeProfileScreen.png  width="28%" />
 </p>
 ---
