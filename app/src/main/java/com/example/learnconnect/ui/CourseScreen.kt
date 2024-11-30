@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +21,8 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -29,55 +32,61 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.learnconnect.R
-import com.example.learnconnect.viewModels.VideoViewModel
+import com.example.learnconnect.models.Video
+
+import com.example.learnconnect.viewModels.CourseViewModel
+import com.example.learnconnect.viewModels.LoginViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CourseScreen(
-    viewModel: VideoViewModel = hiltViewModel(),
+    viewModel: CourseViewModel = hiltViewModel(),
+    loginViewModel: LoginViewModel,
+    onNavigateToVideoPlayer: (Int) -> Unit,
     onFavoriteClick: () -> Unit,
-    onJoinClick: () -> Unit,
+    navController: NavController,
     isUserEnrolled: Boolean,
     courseId: Int,
 ) {
-
-Log.d("Course Id", courseId.toString())
+    Log.d("Course Id", courseId.toString())
     val videos by viewModel.videos.observeAsState(emptyList())
-    val course by  viewModel.course.observeAsState()
+    val course by viewModel.course.observeAsState()
     LaunchedEffect(courseId) {
         viewModel.loadVideos()
         viewModel.getVideosByCourse(courseId)
     }
     course?.let { Log.d("Course Data", it.name) }
 
+    val userId = loginViewModel.getUserId()
+    Log.d("USER ID", userId.toString())
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(
                 title = {
                     course?.let {
                         Text(
                             text = it.name,
-                            color = colorResource(id = R.color.title_color)
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     }
                 },
                 navigationIcon = {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                        contentDescription = "Next",
-                        tint = colorResource(id = R.color.title_color),
-                        modifier = Modifier
-                            .size(60.dp)
-                            .padding(top = 15.dp)
-                    )
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
                 },
                 actions = {
                     Icon(
@@ -86,12 +95,13 @@ Log.d("Course Id", courseId.toString())
                         modifier = Modifier
                             .clickable { onFavoriteClick() }
                             .size(50.dp)
-                            .padding(top = 15.dp)
+                            .padding(top = 15.dp),
+                        tint = MaterialTheme.colorScheme.onSecondary
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.LightGray,
-                    titleContentColor = Color.Black
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -104,15 +114,15 @@ Log.d("Course Id", courseId.toString())
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
-                items(videos) { video ->
-                    if (course != null) {
+                items(videos.filter { it.course_id == courseId }) { video ->
+                    course?.let {
                         VideoCard(
-                            imageUrl = course!!.course_image,
-                            videoName = video.title
+                            imageUrl = it.course_image,
+                            video = video,
+                            onNavigateToVideoPlayer = onNavigateToVideoPlayer
                         )
                     }
                 }
@@ -120,13 +130,18 @@ Log.d("Course Id", courseId.toString())
 
             if (!isUserEnrolled) {
                 Button(
-                    onClick = { onJoinClick() },
+                    onClick = { viewModel.saveUserCourse(userId = userId, courseId = courseId) },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 16.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = colorResource(id = R.color.brand_color))
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primary
+                    )
                 ) {
-                    Text(text = "Join The Course", color = colorResource(id = R.color.title_color))
+                    Text(
+                        text = "Join The Course",
+                        color = MaterialTheme.colorScheme.onPrimary
+                    )
                 }
             }
         }
@@ -134,12 +149,17 @@ Log.d("Course Id", courseId.toString())
 }
 
 @Composable
-fun VideoCard(imageUrl: String, videoName: String) {
+fun VideoCard(
+    imageUrl: String,
+    video: Video,
+    onNavigateToVideoPlayer: (Int) -> Unit,
+) {
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         modifier = Modifier
             .fillMaxWidth()
+            .clickable { onNavigateToVideoPlayer(video.id) }
     ) {
         Column {
             AsyncImage(
@@ -151,9 +171,9 @@ fun VideoCard(imageUrl: String, videoName: String) {
                 contentScale = ContentScale.Crop
             )
             Text(
-                text = videoName,
+                text = video.title,
                 modifier = Modifier.padding(16.dp),
-                color = Color.Gray
+                color = MaterialTheme.colorScheme.onSurface
             )
         }
     }

@@ -15,7 +15,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class VideoViewModel @Inject constructor(private val courseRepository: CourseRepository) : ViewModel() {
+class CourseViewModel @Inject constructor(private val courseRepository: CourseRepository) : ViewModel() {
 
     private val _categories = MutableLiveData<List<CourseType>>()
     val categories: LiveData<List<CourseType>> get() = _categories
@@ -30,12 +30,17 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
     private val _videos = MutableLiveData<List<Video>>()
     val videos: LiveData<List<Video>> get() = _videos
 
+    private val _video = MutableLiveData<Video>()
+    val video: LiveData<Video> get() = _video
+
     private val _filteredVideos = MediatorLiveData<List<Video>>()
     val filteredVideos: LiveData<List<Video>> get() = _filteredVideos
 
     private val _searchQuery = MutableLiveData("")
     val searchQuery: LiveData<String> get() = _searchQuery
 
+    private val _userCourseSaved = MutableLiveData<Boolean>()
+    val userCourseSaved: LiveData<Boolean> get() = _userCourseSaved
 
     private val _filteredCourses = MutableLiveData<List<Course>>()
     val filteredCourses: LiveData<List<Course>> get() = _filteredCourses
@@ -119,4 +124,26 @@ class VideoViewModel @Inject constructor(private val courseRepository: CourseRep
             video.title.contains(query, ignoreCase = true)
         }
     }
+    fun saveUserCourse(courseId: Int, userId: Int) {
+        viewModelScope.launch {
+            try {
+
+                courseRepository.saveUserCourse( userId,courseId)
+                _userCourseSaved.postValue(true)
+            } catch (e: Exception) {
+                _userCourseSaved.postValue(false)
+            }
+        }
+    }
+    suspend fun isUserEnrolled(userId: Int, courseId: Int):Boolean {
+        return courseRepository.isUserEnrolled(userId, courseId)
+    }
+    fun getVideoDetails(videoId: Int): LiveData<Video> {
+        viewModelScope.launch {
+            val fetchedVideo = courseRepository.getVideoById(videoId)
+            _video.postValue(fetchedVideo)
+        }
+        return video
+    }
+
 }

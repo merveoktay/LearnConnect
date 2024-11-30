@@ -1,7 +1,7 @@
 package com.example.learnconnect.ui
 
-import android.content.Context
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
@@ -31,38 +32,51 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.learnconnect.App
 import com.example.learnconnect.R
-import com.example.learnconnect.theme.AppTheme
+import com.example.learnconnect.theme.LearnConnectTheme
+import com.example.learnconnect.theme.ThemePreferences
 
 @Composable
-fun ProfileScreen(onNavigateToHome: () -> Unit,onNavigateToFavorite:()-> Unit,onNavigateToCourses:()-> Unit){
-
+fun ProfileScreen(
+    onNavigateToHome: () -> Unit,
+    onNavigateToFavorite: () -> Unit,
+    onNavigateToCourses: () -> Unit,
+) {
+    val themePreferences=ThemePreferences(context = LocalContext.current)
+    var isDarkTheme = themePreferences.getDarkModeState()
+    LaunchedEffect(isDarkTheme) {
+        themePreferences.saveDarkModeState(isDarkTheme)
+    }
     Scaffold(
         topBar = {
             ProfileTopBar()
         },
         bottomBar = {
-            ProfileBottomBar(onNavigateToHome,onNavigateToCourses)
+            ProfileBottomBar(onNavigateToHome, onNavigateToCourses)
         },
         content = { innerPadding ->
-            ProfileContent( modifier = Modifier.padding(innerPadding),onNavigateToFavorite)
+            ProfileContent(
+                modifier = Modifier.padding(innerPadding),
+                onNavigateToFavorite,
+                isDarkTheme = isDarkTheme,
+                onThemeChanged = { isDarkTheme = it }
+            )
         }
     )
 }
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun  ProfileTopBar(){
+fun ProfileTopBar() {
     TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.LightGray),
-        title = {
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.secondary
+        ),        title = {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Image(
                     painter = painterResource(id = R.drawable.xsmall_brand_logo),
@@ -70,125 +84,147 @@ fun  ProfileTopBar(){
                     modifier = Modifier.size(40.dp)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
-                Text(text = "Profile", color = colorResource(id = R.color.title_color))
+                Text(text = "Profile ", color = MaterialTheme.colorScheme.onSecondary)
             }
         },
-        actions = {
-
-        }
+        actions = {}
     )
 }
+
 @Composable
-fun  ProfileBottomBar(onNavigateToHome: () -> Unit,onNavigateToCourses:()->Unit){
+fun ProfileBottomBar(onNavigateToHome: () -> Unit, onNavigateToCourses: () -> Unit) {
     BottomAppBar(
-        containerColor = colorResource(id = R.color.hint_color)
+        containerColor = MaterialTheme.colorScheme.secondary
     ) {
         NavigationBar(
-            containerColor = colorResource(id = R.color.hint_color),
-            contentColor = colorResource(id = R.color.title_color)
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onSecondary
         ) {
             NavigationBarItem(
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.unselected_course_icon),
                         contentDescription = "My Courses",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
                     )
                 },
                 selected = false,
-                onClick = {onNavigateToCourses()}
+                onClick = { onNavigateToCourses() },
             )
             NavigationBarItem(
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.unselected_home_icon),
                         contentDescription = "Home",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
                     )
                 },
                 selected = false,
-                onClick = {onNavigateToHome() }
+                onClick = { onNavigateToHome() },
             )
             NavigationBarItem(
                 icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.selected_profile_icon),
                         contentDescription = "Profile",
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp),
+                        tint = MaterialTheme.colorScheme.onSurface
                     )
                 },
                 selected = true,
-                onClick = {}
-            )
+                onClick = {},)
         }
     }
 }
+
+
 @Composable
-fun  ProfileContent( modifier: Modifier = Modifier,onNavigateToFavorite:()-> Unit){
+fun ProfileContent(
+    modifier: Modifier = Modifier,
+    onNavigateToFavorite: () -> Unit,
+    isDarkTheme: Boolean,
+    onThemeChanged: (Boolean) -> Unit
+) {
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
     ) {
-        Column(  modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.Start ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+            horizontalAlignment = Alignment.Start
+        ) {
             Spacer(modifier = Modifier.height(30.dp))
-            TextButton(onClick = { onNavigateToFavorite()}) {
+            Text(
+                text = "USER NAME",
+                modifier = Modifier.padding(16.dp),
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+            TextButton(onClick = { onNavigateToFavorite() }) {
                 Text(
-                    text = "My Favorite Course",
-                    style = TextStyle(
-                        color = colorResource(id = R.color.body_text_color),
-                        fontWeight = FontWeight.Bold
-                    )
+                    text = "❤ My Favorite Course ❤",
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
             }
             Spacer(modifier = Modifier.height(20.dp))
             DarkModeToggleScreen()
-
         }
-
     }
 }
+
 @Composable
 fun DarkModeToggleScreen() {
     val context = LocalContext.current
-    var isDarkMode by remember { mutableStateOf(getUserThemePreference(context)) }
+    val themePreferences = remember { ThemePreferences(context) }
 
-    LaunchedEffect(isDarkMode) {
-        saveUserThemePreference(context, isDarkMode)
-        println("Dark Mode UI Güncelleniyor, Durum: $isDarkMode")
+    var isDarkTheme by remember { mutableStateOf(themePreferences.getDarkModeState()) }
+
+    LaunchedEffect(isDarkTheme) {
+        themePreferences.saveDarkModeState(isDarkTheme)
     }
-
-    AppTheme(isDarkMode = isDarkMode) {
+    LearnConnectTheme(isDarkTheme = isDarkTheme) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth()
+                .background(MaterialTheme.colorScheme.background)
         ) {
             Text(
                 text = "Dark Mode",
                 modifier = Modifier.padding(bottom = 16.dp),
                 fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Spacer(modifier = Modifier.width(20.dp))
-
+            Text(
+                text = "☀️",
+                modifier = Modifier.align(Alignment.CenterVertically),
+                fontSize = 30.sp
+            )
+            Spacer(modifier = Modifier.width(5.dp))
             Switch(
-                checked = isDarkMode,
-                onCheckedChange = { isDarkMode = it },
+                checked = isDarkTheme,
+                onCheckedChange = { newValue ->
+                    isDarkTheme = newValue
+                },
                 modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Spacer(modifier = Modifier.width(5.dp))
+            Text(
+                text = "🌘",
+                modifier = Modifier.align(Alignment.CenterVertically),
+                fontSize = 30.sp
             )
         }
     }
 }
-private fun saveUserThemePreference(context: Context, isDarkMode: Boolean) {
-    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-    with(sharedPreferences.edit()) {
-        putBoolean("DARK_MODE", isDarkMode)
-        apply()
-    }
-}
 
-private fun getUserThemePreference(context: Context): Boolean {
-    val sharedPreferences = context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
-    return sharedPreferences.getBoolean("DARK_MODE", false)
-}
+
+
+

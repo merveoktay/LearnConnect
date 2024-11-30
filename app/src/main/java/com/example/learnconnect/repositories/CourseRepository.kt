@@ -36,4 +36,15 @@ class CourseRepository @Inject constructor(
     suspend fun getVideosByCourseId(courseId: Int): List<Video> {
         return courseCategoryProvider.getVideosByCourse(courseId)
     }
+    suspend fun saveUserCourse(courseId: Int, userId: Int) {
+      courseCategoryProvider.insertCourseForUser(userId, courseId)
+    }
+
+    suspend fun isUserEnrolled(courseId: Int, userId: Int):Boolean {
+       return courseCategoryProvider.isUserEnrolled(userId, courseId)
+    }
+    suspend fun getVideoById(videoId:Int):Video{
+        return courseCategoryProvider.getVideoById(videoId)
+    }
+
 }

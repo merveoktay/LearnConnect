@@ -5,6 +5,7 @@ import com.example.learnconnect.dao.CourseDao
 import com.example.learnconnect.models.Video
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
+import com.example.learnconnect.models.UserCourse
 import javax.inject.Inject
 
 class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDao) {
@@ -119,69 +120,69 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
                     Video(
                         1,
                         "Activities & the Activity Lifecycle",
-                        "https://youtu.be/SJw3Nu_h8kk?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
+                        "https://videocdn.cdnpk.net/videos/27fdc0ee-40fa-5e6a-aa99-f003acd2af4c/horizontal/previews/clear/large.mp4?token=exp=1732928747~hmac=e7a3a5f8e94a58ca15cc37e4b9ad587710e3afffda4c3ee137ee49b114fe8f51",
                         10
                     ),
                     Video(
                         2,
                         "Tasks, Back Stack & Launch Modes",
-                        "https://youtu.be/Z0AzoFOiH9c?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
+                        "https://cdn.pixabay.com/video/2015/08/08/90-135735293_large.mp4",
                         10
                     ),
                     Video(
                         3,
                         "ViewModels",
-                        "https://youtu.be/9sqvBydNJSg?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
+                        "https://cdn.pixabay.com/video/2022/10/24/136259-764387660_large.mp4",
                         10
                     ),
                     Video(
                         4,
                         "What is the Context?",
-                        "https://youtu.be/YdnM2ZvrIFM?list=PLQkwcJG4YTCSVDhww92llY3CAnc_vUhsm",
+                        "https://cdn.pixabay.com/video/2022/10/31/137265-766326232_large.mp4",
                         10
                     ),
 
                     Video(
                         5,
                         "Flutter Mimari v2b1: Nedir",
-                        "hhttps://youtu.be/zOG-4bkLeu0?list=PL1k5oWAuBhgUAFNvxdF6wIuC9cfvN5PrZ",
+                        "https://cdn.pixabay.com/video/2022/10/24/136264-764387675_large.mp4",
                         1
                     ),
                     Video(
                         6,
                         "Proje ve modül oluşturma",
-                        "https://youtu.be/TIrcxptk89Y?list=PL1k5oWAuBhgUAFNvxdF6wIuC9cfvN5PrZ",
+                        "https://cdn.pixabay.com/video/2022/10/24/136283-764387738_large.mp4",
                         1
                     ),
                     Video(
                         7,
                         "VSCode eklentileri",
-                        "https://youtu.be/omIsEj5fiXM?list=PL1k5oWAuBhgUAFNvxdF6wIuC9cfvN5PrZ",
+                        "https://cdn.pixabay.com/video/2020/05/23/39892-423345743_large.mp4",
                         1
                     ),
                     Video(
                         8,
                         "Çoklu dil desteği alt yapısı hazırlama",
-                        "https://youtu.be/xLpKFOqoPMI?list=PL1k5oWAuBhgUAFNvxdF6wIuC9cfvN5PrZ",
+                        "https://cdn.pixabay.com/video/2022/10/24/136269-764387693_large.mp4",
                         1
                     ),
 
                     Video(
                         9,
                         "Introdaction",
-                        "https://youtu.be/UNH0bE4zPtY?list=PLSzsOkUDsvdu5Mm67aBYs2YPu2OM4mFzt",
+                        "https://cdn.pixabay.com/video/2020/04/25/37106-413256452_large.mp4",
                         2
                     ),
                     Video(
                         10,
                         "How Does an App Work?",
-                        "https://youtu.be/n7UFxV7zHKw?list=PLSzsOkUDsvdu5Mm67aBYs2YPu2OM4mFzt",
+                        "https://videocdn.cdnpk.net/videos/c7728dc3-7043-4d82-a2f8-267da8e07a77/horizontal/previews/videvo_watermarked/large.mp4",
                         2
                     ),
                     Video(
                         11,
                         "How to Make an App",
-                        "https://youtu.be/HxssFtenD_M?list=PLSzsOkUDsvdu5Mm67aBYs2YPu2OM4mFzt",
+                        "https://videocdn.cdnpk.net/videos/c97ab11b-122c-4ab4-ae3a-1c10f37297bc/horizontal/previews/videvo_watermarked/large.mp4",
                         2
                     ),
 
@@ -189,108 +190,108 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
                     Video(
                         12,
                         "Introdaction",
-                        "https://youtu.be/gQojMIhELvM?list=PLoYCgNOIyGAB_8_iq1cL8MVeun7cB6eNc",
+                        "https://cdn.pixabay.com/video/2015/10/16/1046-142621379_large.mp4",
                         3
                     ),
                     Video(
                         13,
                         "HTML",
-                        "https://youtu.be/RjHflb-QgVc?list=PLoYCgNOIyGAB_8_iq1cL8MVeun7cB6eNc",
+                        "https://media.istockphoto.com/id/1332504522/tr/video/businesswoman-working-on-computer-at-night.mp4?s=mp4-640x640-is&k=20&c=lGmZd9RQtBOqxzyGovrumi_QlQZ0BLZwhPFQwXI_JTE=",
                         3
                     ),
                     Video(
                         14,
                         "HTML CSS",
-                        "https://youtu.be/J35jug1uHzE?list=PLoYCgNOIyGAB_8_iq1cL8MVeun7cB6eNc",
+                        "https://media.istockphoto.com/id/1006249812/tr/video/hologram-veri-izlerken.mp4?s=mp4-640x640-is&k=20&c=nuqgV6sKtHPr73y_Bo90_FLGWn_5AjFB1EJhAocDT4w=",
                         3
                     ),
                     Video(
                         15,
                         "How To Make A Website From HTML & CSS",
-                        "https://youtu.be/5iUB31h2Hzs?list=PLoYCgNOIyGAB_8_iq1cL8MVeun7cB6eNc",
+                        "https://cdn.pixabay.com/video/2019/05/06/23355-334950213_large.mp4",
                         3
                     ),
                     Video(
                         16,
                         "Hand-code an HTML + CSS layout",
-                        "https://youtu.be/dMK_3lH1YPo?list=PLoYCgNOIyGAB_8_iq1cL8MVeun7cB6eNc",
+                        "https://cdn.pixabay.com/video/2015/12/11/1625-148614367_medium.mp4",
                         3
                     ),
 
                     Video(
                         17,
                         "Introduction",
-                        "https://youtu.be/W-D71ZeMixQ?list=PLBlnK6fEyqRiwWLbSXKFtdGV8OVqr9dZr",
+                        "https://videocdn.cdnpk.net/videos/cde6a5c3-5c11-4b75-981e-1cfc28a8685a/horizontal/previews/videvo_watermarked/large.mp4",
                         4
                     ),
                     Video(
                         18,
                         "Classes and Object",
-                        "https://youtu.be/Kk6dlF59yGg?list=PLBlnK6fEyqRiwWLbSXKFtdGV8OVqr9dZr",
+                        "https://cdn.pixabay.com/video/2020/02/24/32767-394004551_large.mp4",
                         4
                     ),
                     Video(
                         19,
                         "Creating a Class in Java",
-                        "https://youtu.be/EplETikbJis?list=PLBlnK6fEyqRiwWLbSXKFtdGV8OVqr9dZr",
+                        "https://videocdn.cdnpk.net/videos/a3a78c75-90a9-451e-b3de-89822a9a3c50/horizontal/previews/videvo_watermarked/large.mp4",
                         4
                     ),
 
                     Video(
                         20,
                         "Beginner's Game Development Tutorial",
-                        "https://youtu.be/gB1F9G0JXOo",
+                        "https://cdn.pixabay.com/video/2019/05/06/23354-334950206_large.mp4",
                         5
                     ),
 
                     Video(
                         21,
                         "Programming Tutorial",
-                        "https://youtu.be/QXeEoD0pB3E?list=PLsyeobzWxl7poL9JTVyndKe62ieoN-MZ3",
+                        "https://cdn.pixabay.com/video/2015/12/11/1625-148614367_medium.mp4",
                         6
                     ),
                     Video(
                         22,
                         "Introduction to Python",
-                        "https://youtu.be/hEgO047GxaQ?list=PLsyeobzWxl7poL9JTVyndKe62ieoN-MZ3",
+                        "https://cdn.pixabay.com/video/2020/06/06/41263-429379223_large.mp4",
                         6
                     ),
 
                     Video(
                         23,
                         "Data Science for Beginners",
-                        "https://youtu.be/jNeUBWrrRsQ",
+                        "https://cdn.pixabay.com/video/2020/02/24/32767-394004551_large.mp4",
                         7
                     ),
                     Video(
                         24,
                         "Statistics For Data Science",
-                        "https://youtu.be/Lv0xcdeXaGU",
+                        "https://cdn.pixabay.com/video/2023/08/01/174086-850404739_large.mp4",
                         7
                     ),
 
                     Video(
                         25,
                         "Frame Tool",
-                        "https://youtu.be/DTiXw486rRE?list=PLdctvM0pDo0tYucIbTxDUbKVnWnH5szz6",
+                        "https://cdn.pixabay.com/video/2024/06/06/215500_large.mp4",
                         8                 ),
                     Video(
                         26,
                         "Shape Tool",
-                        "https://youtu.be/5iFF50wzCzY?list=PLdctvM0pDo0tYucIbTxDUbKVnWnH5szz6",
+                        "https://cdn.pixabay.com/video/2023/10/01/183107-870151708_large.mp4",
                         8
                     ),
                     Video(
                         27,
                         "Pen Tool",
-                        "https://youtu.be/tM6G8ExyKYA?list=PLdctvM0pDo0tYucIbTxDUbKVnWnH5szz6",
+                        "https://media.istockphoto.com/id/1556389414/tr/video/man-using-a-laptop-double-exposure-with-business-data-analytics-dashboard.mp4?s=mp4-640x640-is&k=20&c=im3IwkIeg5H2KhxLb3_gRf5VKsSDuZVD4OvHyxfGp74=",
                         8
                     ),
 
                     Video(
                         28,
                         "Figma UI Design Tutorial",
-                        "https://youtu.be/FTFaQWZBqQ8",
+                        "https://videocdn.cdnpk.net/videos/f4349d40-0272-5f2b-b755-410168ab606b/horizontal/previews/videvo_watermarked/large.mp4",
                         9
                     )
 
@@ -331,4 +332,22 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
         return courseDao.getAllCoursesByType(courseTypeId)
     }
+    suspend fun insertCourseForUser(userId:Int,courseId: Int){
+        val userCourse = UserCourse(user_id = userId, course_id = courseId)
+        return courseDao.insertUserCourse(userCourse)
+    }
+
+    suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean {
+        return courseDao.isUserEnrolled(userId, courseId) != null
+    }
+    fun getVideoById(videoId: Int): Video {
+        return courseDao.getVideoById(videoId)
+    }
+
+
+
+
+
+
+
 }

@@ -16,6 +16,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -43,14 +43,14 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var buttonColor = colorResource(id = R.color.hint_color)
+    var buttonColor = MaterialTheme.colorScheme.secondary
     var clickable = false
     var isPasswordVisible by remember { mutableStateOf(false) }
 
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.surface_color))
+            .background(MaterialTheme.colorScheme.surface)
     ) {
 
         IconButton(onClick = {
@@ -60,11 +60,10 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
             )
         }) {
 
-
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Next",
-                tint = colorResource(id = R.color.title_color),
+                contentDescription = "Back",
+                tint = MaterialTheme.colorScheme.onSurface,
                 modifier = Modifier
                     .size(60.dp)
                     .align(Alignment.TopStart)
@@ -85,11 +84,10 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                 style = TextStyle(
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Medium,
-                    color = colorResource(id = R.color.title_color)
+                    color = MaterialTheme.colorScheme.onSurface
                 ),
                 modifier = Modifier
                     .align(Alignment.Start)
-
             )
             Spacer(modifier = Modifier.height(100.dp))
 
@@ -99,7 +97,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                     username = newUsername
                     viewModel.onUsernameChange(username)
                 },
-                label = { Text("Full Name", color = colorResource(id = R.color.hint_color)) },
+                label = { Text("Full Name", color = MaterialTheme.colorScheme.onSurface) },
                 modifier = Modifier
                     .fillMaxWidth(),
                 singleLine = true,
@@ -113,7 +111,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                     email = newEmail
                     viewModel.onEmailChange(newEmail)
                 },
-                label = { Text("Email", color = colorResource(id = R.color.hint_color)) },
+                label = { Text("Email", color = MaterialTheme.colorScheme.onSurface) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp)
@@ -123,19 +121,20 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
             OutlinedTextField(
                 value = password,
                 onValueChange = { newPassword ->
-                     password = newPassword
+                    password = newPassword
                     viewModel.onPasswordChange(newPassword)
                 },
-                label = { Text("Password", color = colorResource(id = R.color.hint_color)) },
+                label = { Text("Password", color = MaterialTheme.colorScheme.onSurface) },
                 modifier = Modifier.fillMaxWidth(),
                 singleLine = true,
                 shape = RoundedCornerShape(8.dp),
-                visualTransformation =  if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 trailingIcon = {
                     IconButton(
-                        onClick = { isPasswordVisible = !isPasswordVisible }  // Tıklandığında şifreyi göster/gizle
+                        onClick = { isPasswordVisible = !isPasswordVisible }
                     ) {
-                        Icon(painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
+                        Icon(
+                            painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
                             contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
                         )
                     }
@@ -144,10 +143,10 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
 
             Spacer(modifier = Modifier.height(75.dp))
             if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
-                buttonColor = colorResource(id = R.color.brand_color)
+                buttonColor = MaterialTheme.colorScheme.primary
                 clickable = true
             } else {
-                buttonColor = colorResource(id = R.color.hint_color)
+                buttonColor = MaterialTheme.colorScheme.secondary
                 clickable = false
             }
             Button(
@@ -157,7 +156,6 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                             onSuccess = { onNavigateToLogin() },
                             onError = { errorMessage -> println(errorMessage) }
                         )
-
                     }
                 },
                 modifier = Modifier
@@ -174,25 +172,24 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                 )
             }
             Spacer(modifier = Modifier.height(100.dp))
-            Text(text = "By registering you agree to ", color = Color(0xFF888888))
+            Text(text = "By registering you agree to ", color = MaterialTheme.colorScheme.onBackground)
             Text(
                 text = "Terms & Conditions",
                 style = TextStyle(
-                    color = Color(0xFFE53935),
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
             )
-            Text(text = "and", color = Color(0xFF888888))
+            Text(text = "and", color = MaterialTheme.colorScheme.onBackground)
             Text(
                 text = "Privacy Policy",
                 style = TextStyle(
-                    color = Color(0xFFE53935),
+                    color = MaterialTheme.colorScheme.primary,
                     fontWeight = FontWeight.Bold
                 )
             )
-            Text(text = "of the Learn Connect", color = Color(0xFF888888))
-
-
+            Text(text = "of the Learn Connect", color = MaterialTheme.colorScheme.onBackground)
         }
     }
 }
+
