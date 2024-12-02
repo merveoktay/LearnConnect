@@ -328,6 +328,10 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
         Log.d("getCourse", courseDao.getAllCourse().toString())
         return courseDao.getCourse(courseId)
     }
+    suspend fun getUserCourses(userId:Int): List<UserCourse> {
+        Log.d("course", courseDao.getUserCourses(userId).toString())
+        return courseDao.getUserCourses(userId)
+    }
 
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
         return courseDao.getAllCoursesByType(courseTypeId)

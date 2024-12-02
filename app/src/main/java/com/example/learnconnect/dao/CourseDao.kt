@@ -50,6 +50,7 @@ interface CourseDao {
     @Query("SELECT * FROM user_courses WHERE user_id = :userId")
     suspend fun getUserCourses(userId: Int): List<UserCourse>
 
+
     @Query("SELECT * FROM user_favorite_courses WHERE user_id = :userId")
     suspend fun getUserFavoriteCourses(userId: Int): List<UserFavoriteCourse>
 

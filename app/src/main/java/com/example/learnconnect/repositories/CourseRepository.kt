@@ -3,6 +3,7 @@ package com.example.learnconnect.repositories
 import com.example.learnconnect.initialize.CourseCategoryProvider
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
+import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.Video
 import javax.inject.Inject
 
@@ -29,6 +30,9 @@ class CourseRepository @Inject constructor(
     }
     suspend fun getVideos(): List<Video> {
         return courseCategoryProvider.getVideos()
+    }
+    suspend fun getUserCourses(userId: Int): List<UserCourse> {
+        return courseCategoryProvider.getUserCourses(userId)
     }
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
         return courseCategoryProvider.getCoursesByType(courseTypeId)

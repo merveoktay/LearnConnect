@@ -93,7 +93,7 @@ fun CourseScreen(
                     }
                 },
                 actions = {
-                    if(!isUserEnrolled!!) {
+                    if(!isUserEnrolled) {
                         IconButton(onClick = {
                             viewModel.saveUserCourse(userId = userId, courseId = courseId)
                         }) {

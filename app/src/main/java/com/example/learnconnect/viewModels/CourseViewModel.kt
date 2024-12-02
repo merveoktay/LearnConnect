@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
+import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.Video
 import com.example.learnconnect.repositories.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,6 +26,9 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _courses = MutableLiveData<List<Course>>()
     val courses: LiveData<List<Course>> get() = _courses
+
+    private val _usercourses = MutableLiveData<List<UserCourse>>()
+    val usercourses: LiveData<List<UserCourse>> get() = _usercourses
 
     private val _course = MutableLiveData<Course>()
     val course: LiveData<Course> = _course
@@ -121,6 +125,13 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
             val fetchedCourse = courseRepository.getCourse(courseId)
             _course.postValue(fetchedCourse)
         }
+    }
+    fun getUserCourses(userId: Int): LiveData<List<UserCourse> >{
+        viewModelScope.launch {
+            val fetchedCourse = courseRepository.getUserCourses(userId)
+            _usercourses.postValue(fetchedCourse)
+        }
+        return usercourses
     }
 
     fun getCourse(courseId: Int): Course? {
