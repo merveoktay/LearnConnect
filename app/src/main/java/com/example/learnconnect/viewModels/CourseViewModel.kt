@@ -6,7 +6,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
 import com.example.learnconnect.models.UserCourse
@@ -38,6 +37,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _video = MutableLiveData<Video>()
     val video: LiveData<Video> get() = _video
+
     private val _result = MutableLiveData<Boolean>()
     val result: LiveData<Boolean> get() = _result
 
@@ -120,23 +120,21 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
         }
     }
 
-    fun getVideosByCourse(courseId: Int) {
+    fun getCourse(courseId: Int) {
         viewModelScope.launch {
             val fetchedCourse = courseRepository.getCourse(courseId)
             _course.postValue(fetchedCourse)
         }
     }
-    fun getUserCourses(userId: Int): LiveData<List<UserCourse> >{
+    fun getUserCourses(userId: Int){
         viewModelScope.launch {
             val fetchedCourse = courseRepository.getUserCourses(userId)
             _usercourses.postValue(fetchedCourse)
         }
-        return usercourses
+
     }
 
-    fun getCourse(courseId: Int): Course? {
-        return _course.value?.takeIf { it.id == courseId }
-    }
+
 
     private fun filterVideos() {
         val query = searchQuery.value.orEmpty()

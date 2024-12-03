@@ -15,8 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -60,13 +58,16 @@ fun CourseScreen(
     Log.d("Course Id", courseId.toString())
     val videos by viewModel.videos.observeAsState(emptyList())
     val course by viewModel.course.observeAsState()
+    val userId = PreferencesManager.getUserId(context = LocalContext.current)
+    val isUserEnrolled by viewModel.result.observeAsState()
+
     LaunchedEffect(courseId) {
         viewModel.loadVideos()
-        viewModel.getVideosByCourse(courseId)
+        viewModel.getCourse(courseId)
+        viewModel.isUserEnrolled(userId  ,courseId)
     }
     course?.let { Log.d("Course Data", it.name) }
-    val userId = PreferencesManager.getUserId(context = LocalContext.current)
-    val isUserEnrolled by viewModel.result.observeAsState(initial = false)
+
      Log.d("IS ENROLL", isUserEnrolled.toString())
 
     Log.d("USER ID", userId.toString())
@@ -93,7 +94,7 @@ fun CourseScreen(
                     }
                 },
                 actions = {
-                    if(!isUserEnrolled) {
+                    if(isUserEnrolled == false) {
                         IconButton(onClick = {
                             viewModel.saveUserCourse(userId = userId, courseId = courseId)
                         }) {

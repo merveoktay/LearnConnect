@@ -54,8 +54,8 @@ interface CourseDao {
     @Query("SELECT * FROM user_favorite_courses WHERE user_id = :userId")
     suspend fun getUserFavoriteCourses(userId: Int): List<UserFavoriteCourse>
 
-    @Query("SELECT * FROM user_courses WHERE user_id = :userId AND course_id = :courseId")
-    suspend fun isUserEnrolled(userId: Int, courseId: Int): UserCourse?
+    @Query("SELECT EXISTS(SELECT 1 FROM user_courses WHERE user_id = :userId AND course_id = :courseId)")
+    suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean
 
     @Query("SELECT * FROM videos WHERE id = :videoId LIMIT 1")
     fun getVideoById(videoId: Int): Video
