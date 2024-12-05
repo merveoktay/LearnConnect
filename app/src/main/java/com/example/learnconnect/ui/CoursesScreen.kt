@@ -103,15 +103,23 @@ fun CoursesContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            userCourses.let {courseList->
-                items(courseList) {userCourse->
-                   courseId=userCourse.course_id
-                   Log.d("UserCoursee",userCourse.course_id.toString())
-                    Log.d("UserCoursee", course?.name ?: "")
+            userCourses.let { courseList ->
+                items(courseList) { userCourse ->
+                    val currentCourseId = userCourse.course_id
+                    Log.d("UserCourse", currentCourseId.toString())
+
+                    LaunchedEffect(currentCourseId) {
+                        courseViewModel.getCourse(currentCourseId)
+                    }
+
+                    val currentCourse = courseViewModel.course.observeAsState().value
+                    Log.d("UserCourseName", currentCourse?.name ?: "")
+
                     CoursesVideoCard(
-                        imageUrl = course?.course_image ?: "",
-                        courseName = course?.name ?: "",
-                        courseId = course?.id ?:0 , onNavigateToCourse
+                        imageUrl = currentCourse?.course_image ?: "",
+                        courseName = currentCourse?.name ?: "Unknown",
+                        courseId = currentCourse?.id ?: 0,
+                        onNavigateToCourse
                     )
                 }
             }

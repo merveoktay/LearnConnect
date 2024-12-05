@@ -344,7 +344,7 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
     suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean {
         return courseDao.isUserEnrolled(userId, courseId)
     }
-    fun getVideoById(videoId: Int): Video {
+    suspend fun getVideoById(videoId: Int): Video {
         return courseDao.getVideoById(videoId)
     }
 

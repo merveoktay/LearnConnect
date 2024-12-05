@@ -39,6 +39,10 @@ fun VideoPlayerScreen(
     navController: NavController,
     courseViewModel: CourseViewModel
 ) {
+
+    LaunchedEffect(Unit) {
+        courseViewModel.getVideoDetails(videoId = videoId)
+    }
     val context = LocalContext.current
     val exoPlayer = remember(context) { ExoPlayer.Builder(context).build() }
 
@@ -46,14 +50,11 @@ fun VideoPlayerScreen(
     Log.d("urlll için id", PreferencesManager.getVideoLink(context))
     val  url=PreferencesManager.getVideoLink(context).toUri()
     Log.d("urlll urlll", video?.url.toString())
-    LaunchedEffect(Unit) {
-        courseViewModel.getVideoDetails(videoId = 123)
-    }
-
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = video?.title ?: "", color = MaterialTheme.colorScheme.onSurface) },
+                title = { Text(text = video?.title ?: "", color = MaterialTheme.colorScheme.onSurface)
+                        Log.d("Video Title video player da", video?.title ?: "")},
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)

@@ -2,6 +2,7 @@ package com.example.learnconnect.ui
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.R
+import com.example.learnconnect.theme.LearnConnectTheme
+import com.example.learnconnect.theme.ThemePreferences
 import com.example.learnconnect.viewModels.CourseViewModel
 
 @Composable
@@ -58,24 +61,27 @@ fun HomeScreen(
     onNavigateToCourses: () -> Unit,
     courseViewModel: CourseViewModel,
 ) {
-
+    val themePreferences= ThemePreferences(context = LocalContext.current)
+    val isDarkTheme = themePreferences.getDarkModeState()
 
     LaunchedEffect(Unit) {
         courseViewModel.loadCategories()
         courseViewModel.loadCourses()
+        themePreferences.getDarkModeState()
     }
     Scaffold(
         topBar = {
-            HomeTopBar()
+            HomeTopBar(isDarkTheme)
         },
         bottomBar = {
-            HomeBottomBar(onNavigateToProfile, onNavigateToCourses)
+            HomeBottomBar(onNavigateToProfile, onNavigateToCourses,isDarkTheme)
         },
         content = { innerPadding ->
             HomeContent(
                 modifier = Modifier.padding(innerPadding),
                 courseViewModel,
-                onNavigateToCourse
+                onNavigateToCourse,
+                isDarkTheme
             )
         }
     )
@@ -83,77 +89,129 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar() {
-    TopAppBar(
-        colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.secondary
-        ),
-        title = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(id = R.drawable.xsmall_brand_logo),
-                    contentDescription = "Logo",
-                    modifier = Modifier.size(40.dp)
-                )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text(
-                    text = "LearnConnect",
-                    color = MaterialTheme.colorScheme.onSecondary
-                )
-            }
-        },
-        actions = {}
-    )
-}
+fun HomeTopBar(isDarkTheme:Boolean) {
+        TopAppBar(
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
+            title = {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Image(
+                        painter = painterResource(id = R.drawable.xsmall_brand_logo),
+                        contentDescription = "Logo",
+                        modifier = Modifier.size(40.dp)
+                    )
+                    Spacer(modifier = Modifier.width(12.dp))
+                    Text(
+                        text = "LearnConnect",
+                        color = MaterialTheme.colorScheme.onSecondary
+                    )
+                }
+            },
+            actions = {}
+        )
+    }
+
 
 @Composable
 fun HomeContent(
     modifier: Modifier = Modifier,
     courseViewModel: CourseViewModel,
     onNavigateToCourse: (Int) -> Unit,
+    isDarkTheme:Boolean
 ) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by courseViewModel.categories.observeAsState(emptyList())
     val courses by courseViewModel.courses.observeAsState(emptyList())
-
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            modifier = modifier
+                .fillMaxSize()
+                .padding(16.dp)
+
         ) {
-            item {
-                Chip(
-                    text = "All Courses",
-                    onClick = { selectedCategory = null }
-                )
+            LazyRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                item {
+                    Chip(
+                        text = "All Courses",
+                        onClick = { selectedCategory = null }, isDarkTheme
+                    )
+                }
+                items(categories) { category ->
+                    Chip(
+                        text = category.name,
+                        onClick = { selectedCategory = category.id },
+                        isDarkTheme
+                    )
+                }
             }
-            items(categories) { category ->
-                Chip(
-                    text = category.name,
-                    onClick = { selectedCategory = category.id }
-                )
+            val filteredCourses = selectedCategory?.let { categoryId ->
+                courseViewModel.getCoursesByCategory(categoryId)
+            } ?: courses
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(filteredCourses) { course ->
+                    VideoCard(
+                        imageUrl = course.course_image,
+                        courseName = course.name,
+                        onNavigateToCourse,
+                        course.id, isDarkTheme
+                    )
+                }
             }
         }
-        val filteredCourses = selectedCategory?.let { categoryId ->
-            courseViewModel.getCoursesByCategory(categoryId)
-        } ?: courses
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
+    }
+
+
+@Composable
+fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit,isDarkTheme:Boolean) {
+    LearnConnectTheme(isDarkTheme = isDarkTheme) {
+        BottomAppBar(
+            containerColor = MaterialTheme.colorScheme.secondary
         ) {
-            items(filteredCourses) { course ->
-                VideoCard(
-                    imageUrl = course.course_image,
-                    courseName = course.name,
-                    onNavigateToCourse,
-                    course.id
+            NavigationBar(
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onSecondary
+            ) {
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.unselected_course_icon),
+                            contentDescription = "My Courses",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    },
+                    selected = false,
+                    onClick = { onNavigateToCourses() }
+                )
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.selected_home_icon),
+                            contentDescription = "Home",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    },
+                    selected = true,
+                    onClick = { }
+                )
+                NavigationBarItem(
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.unselected_profile_icon),
+                            contentDescription = "Profile",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    },
+                    selected = false,
+                    onClick = { onNavigateToProfile() }
                 )
             }
         }
@@ -161,72 +219,27 @@ fun HomeContent(
 }
 
 @Composable
-fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
-    BottomAppBar(
-        containerColor = MaterialTheme.colorScheme.secondary
-    ) {
-        NavigationBar(
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onSecondary
+fun Chip(text: String, onClick: () -> Unit,isDarkTheme:Boolean) {
+        Surface(
+            modifier = Modifier
+                .clickable { onClick() }
+                .wrapContentSize(),
+            color = MaterialTheme.colorScheme.secondary,
+            shape = RoundedCornerShape(16.dp)
         ) {
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.unselected_course_icon),
-                        contentDescription = "My Courses",
-                        modifier = Modifier.size(32.dp)
-                    )
-                },
-                selected = false,
-                onClick = { onNavigateToCourses() }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.selected_home_icon),
-                        contentDescription = "Home",
-                        modifier = Modifier.size(32.dp)
-                    )
-                },
-                selected = true,
-                onClick = { }
-            )
-            NavigationBarItem(
-                icon = {
-                    Icon(
-                        painter = painterResource(id = R.drawable.unselected_profile_icon),
-                        contentDescription = "Profile",
-                        modifier = Modifier.size(32.dp)
-                    )
-                },
-                selected = false,
-                onClick = { onNavigateToProfile() }
-            )
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.wrapContentSize()
+            ) {
+                Text(
+                    text = text,
+                    modifier = Modifier.padding(16.dp),
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            }
         }
     }
-}
 
-@Composable
-fun Chip(text: String, onClick: () -> Unit) {
-    Surface(
-        modifier = Modifier
-            .clickable { onClick() }
-            .wrapContentSize(),
-        color = MaterialTheme.colorScheme.secondary,
-        shape = RoundedCornerShape(16.dp)
-    ) {
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.wrapContentSize()
-        ) {
-            Text(
-                text = text,
-                modifier = Modifier.padding(16.dp),
-                color = MaterialTheme.colorScheme.onSecondary
-            )
-        }
-    }
-}
 
 @Composable
 fun VideoCard(
@@ -234,32 +247,34 @@ fun VideoCard(
     courseName: String,
     onNavigateToCourse: (Int) -> Unit,
     courseId: Int,
+    isDarkTheme:Boolean
 ) {
-    Card(
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                onNavigateToCourse(courseId)
+        Card(
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    onNavigateToCourse(courseId)
+                }
+        ) {
+            Column {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(200.dp),
+                    contentScale = ContentScale.Crop
+                )
+                Text(
+                    text = courseName,
+                    modifier = Modifier
+                        .padding(start = 20.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
+                        .align(Alignment.CenterHorizontally),
+                    color = MaterialTheme.colorScheme.onSurface
+                )
             }
-    ) {
-        Column {
-            AsyncImage(
-                model = imageUrl,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp),
-                contentScale = ContentScale.Crop
-            )
-            Text(
-                text = courseName,
-                modifier = Modifier
-                    .padding(start = 20.dp, top = 8.dp, bottom = 8.dp, end = 10.dp)
-                    .align(Alignment.CenterHorizontally),
-                color = MaterialTheme.colorScheme.onSurface
-            )
         }
-    }
+
 }

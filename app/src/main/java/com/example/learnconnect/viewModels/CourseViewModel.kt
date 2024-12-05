@@ -134,8 +134,6 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     }
 
-
-
     private fun filterVideos() {
         val query = searchQuery.value.orEmpty()
         val videos = _videos.value.orEmpty()
@@ -164,12 +162,11 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     }
 
 
-    fun getVideoDetails(videoId: Int): LiveData<Video> {
+    fun getVideoDetails(videoId: Int){
         viewModelScope.launch {
             val fetchedVideo = courseRepository.getVideoById(videoId)
             _video.postValue(fetchedVideo)
         }
-        return video
     }
 
 }

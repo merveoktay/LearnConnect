@@ -58,5 +58,5 @@ interface CourseDao {
     suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean
 
     @Query("SELECT * FROM videos WHERE id = :videoId LIMIT 1")
-    fun getVideoById(videoId: Int): Video
+    suspend fun getVideoById(videoId: Int): Video
 }

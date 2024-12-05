@@ -165,9 +165,12 @@ fun VideoCard(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
+
                 PreferencesManager.clearVideoLink(context)
                 PreferencesManager.saveVideoLink(context = context, video.url)
+                Log.d("Video Card içinde video url ",video.id.toString())
                 onNavigateToVideoPlayer(video.id)
+
             }
     ) {
         Column {
