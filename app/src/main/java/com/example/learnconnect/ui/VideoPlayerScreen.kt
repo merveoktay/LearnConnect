@@ -25,13 +25,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DefaultDataSource
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
+import com.example.learnconnect.CacheManager
 import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.viewModels.CourseViewModel
-import okhttp3.HttpUrl.Companion.toHttpUrl
+import java.io.File
 
+@androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoPlayerScreen(
@@ -44,11 +53,31 @@ fun VideoPlayerScreen(
         courseViewModel.getVideoDetails(videoId = videoId)
     }
     val context = LocalContext.current
-    val exoPlayer = remember(context) { ExoPlayer.Builder(context).build() }
+    val cache = CacheManager.getSimpleCache(context)
+    val cacheDataSourceFactory = CacheDataSource.Factory()
+        .setCache(cache)
+        .setUpstreamDataSourceFactory(DefaultDataSource.Factory(context))
 
+    val loadControl = DefaultLoadControl.Builder()
+        .setBufferDurationsMs(
+            DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,
+            50000,
+            1500,
+            2000
+        )
+        .build()
+
+    val exoPlayer = remember(context) {
+        ExoPlayer.Builder(context)
+            .setLoadControl(loadControl)
+            .build()
+    }
+    val  url=PreferencesManager.getVideoLink(context).toUri()
+    val mediaItem = MediaItem.fromUri(url)
+    val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+        .createMediaSource(mediaItem)
     val video by courseViewModel.video.observeAsState()
     Log.d("urlll için id", PreferencesManager.getVideoLink(context))
-    val  url=PreferencesManager.getVideoLink(context).toUri()
     Log.d("urlll urlll", video?.url.toString())
     Scaffold(
         topBar = {
@@ -75,9 +104,8 @@ fun VideoPlayerScreen(
                         this.player = exoPlayer
                     }
                 },
-                update = { playerView ->
-                    val mediaItem = MediaItem.fromUri(url)
-                    exoPlayer.setMediaItem(mediaItem)
+                update = {
+                    exoPlayer.setMediaSource(mediaSource)
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
                 }
@@ -87,6 +115,7 @@ fun VideoPlayerScreen(
         DisposableEffect(context) {
             onDispose {
                 exoPlayer.release()
+                CacheManager.getSimpleCache(context).release()
             }
         }
     }
