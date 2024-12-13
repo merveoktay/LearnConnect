@@ -10,6 +10,7 @@ import com.example.learnconnect.models.User
 import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.UserFavoriteCourse
 import com.example.learnconnect.models.Video
+import com.example.learnconnect.models.VideoProgress
 
 @Dao
 interface CourseDao {
@@ -22,9 +23,9 @@ interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVideo(videos: Video)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserCourse(userCourse: UserCourse)
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserFavoriteCourse(userFavoriteCourse: UserFavoriteCourse)
 
     @Query("SELECT * FROM courses WHERE course_type_id = :courseTypeId")
@@ -50,7 +51,6 @@ interface CourseDao {
     @Query("SELECT * FROM user_courses WHERE user_id = :userId")
     suspend fun getUserCourses(userId: Int): List<UserCourse>
 
-
     @Query("SELECT * FROM user_favorite_courses WHERE user_id = :userId")
     suspend fun getUserFavoriteCourses(userId: Int): List<UserFavoriteCourse>
 
@@ -59,4 +59,10 @@ interface CourseDao {
 
     @Query("SELECT * FROM videos WHERE id = :videoId LIMIT 1")
     suspend fun getVideoById(videoId: Int): Video
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun saveProgress(videoProgress: VideoProgress)
+
+    @Query("SELECT progress FROM video_progress WHERE videoId = :videoId LIMIT 1")
+    suspend fun getProgress(videoId: Int): Long
 }

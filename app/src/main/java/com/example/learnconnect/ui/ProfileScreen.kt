@@ -22,66 +22,49 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchColors
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.learnconnect.R
-import com.example.learnconnect.theme.LearnConnectTheme
-import com.example.learnconnect.theme.ThemePreferences
 
 @Composable
 fun ProfileScreen(
+    isDarkTheme: Boolean,
+    changeAppTheme: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToFavorite: () -> Unit,
     onNavigateToCourses: () -> Unit,
 ) {
-    val themePreferences=ThemePreferences(context = LocalContext.current)
-    val isDarkTheme = themePreferences.getDarkModeState()
-    LaunchedEffect(isDarkTheme) {
-        themePreferences.saveDarkModeState(isDarkTheme)
-        themePreferences.getDarkModeState()
-    }
-    LearnConnectTheme(isDarkTheme = isDarkTheme) {
         Log.d("isDarkTheme",isDarkTheme.toString())
         Scaffold(
             topBar = {
-                ProfileTopBar(isDarkTheme = isDarkTheme)
+                ProfileTopBar()
             },
             bottomBar = {
-                ProfileBottomBar(onNavigateToHome, onNavigateToCourses,isDarkTheme = isDarkTheme)
+                ProfileBottomBar(onNavigateToHome, onNavigateToCourses)
             },
             content = { innerPadding ->
                 ProfileContent(
                     modifier = Modifier.padding(innerPadding),
                     onNavigateToFavorite,
                     isDarkTheme = isDarkTheme,
+                    changeAppTheme = changeAppTheme,
                 )
             }
         )
-    }
 }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProfileTopBar( isDarkTheme: Boolean) {
-    LearnConnectTheme(isDarkTheme = isDarkTheme) {
-        Log.d("isDarkThemeTopBar",isDarkTheme.toString())
+fun ProfileTopBar( ) {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.secondary
@@ -98,13 +81,10 @@ fun ProfileTopBar( isDarkTheme: Boolean) {
             },
             actions = {}
         )
-    }
 }
 
 @Composable
-fun ProfileBottomBar(onNavigateToHome: () -> Unit, onNavigateToCourses: () -> Unit, isDarkTheme: Boolean) {
-    Log.d("isDarkThemeBottomBar",isDarkTheme.toString())
-    LearnConnectTheme(isDarkTheme = isDarkTheme) {
+fun ProfileBottomBar(onNavigateToHome: () -> Unit, onNavigateToCourses: () -> Unit) {
         BottomAppBar(
             containerColor = MaterialTheme.colorScheme.secondary
         ) {
@@ -149,7 +129,7 @@ fun ProfileBottomBar(onNavigateToHome: () -> Unit, onNavigateToCourses: () -> Un
             }
         }
     }
-}
+
 
 
 @Composable
@@ -157,9 +137,8 @@ fun ProfileContent(
     modifier: Modifier = Modifier,
     onNavigateToFavorite: () -> Unit,
     isDarkTheme: Boolean,
+    changeAppTheme: () -> Unit,
 ) {
-    LearnConnectTheme(isDarkTheme = isDarkTheme) {
-        Log.d("isDarkThemeContent",isDarkTheme.toString())
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -187,23 +166,18 @@ fun ProfileContent(
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                DarkModeToggleScreen()
+                DarkModeToggleScreen( isDarkTheme = isDarkTheme,
+                    changeAppTheme = changeAppTheme)
             }
         }
     }
-}
+
 
 @SuppressLint("UseCompatLoadingForDrawables")
 @Composable
-fun DarkModeToggleScreen() {
-    val context = LocalContext.current
-    val themePreferences = remember { ThemePreferences(context) }
-
-    var isDarkTheme by rememberSaveable { mutableStateOf(themePreferences.getDarkModeState()) }
-
-
-    LearnConnectTheme(isDarkTheme = isDarkTheme) {
-        Row(
+fun DarkModeToggleScreen(  isDarkTheme: Boolean,
+                           changeAppTheme: () -> Unit) {
+         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(16.dp)
@@ -219,10 +193,7 @@ fun DarkModeToggleScreen() {
             Spacer(modifier = Modifier.width(20.dp))
             Switch(
                 checked = isDarkTheme,
-                onCheckedChange = { newValue ->
-                    isDarkTheme = newValue
-                    themePreferences.saveDarkModeState(newValue)
-                                  },
+                onCheckedChange = {changeAppTheme()  },
                 modifier = Modifier.padding(bottom = 16.dp),thumbContent = {
                     Icon(
                         painter = if (isDarkTheme) painterResource(id = R.drawable.moon_icon) else painterResource(id = R.drawable.sun_icon) ,
@@ -236,13 +207,8 @@ fun DarkModeToggleScreen() {
                 )
             )
         }
-        Log.d("isDarkThemeSwitch",isDarkTheme.toString())
-        LaunchedEffect(isDarkTheme) {
-            themePreferences.saveDarkModeState(isDarkTheme)
-        }
-    }
 
-}
+    }
 
 
 

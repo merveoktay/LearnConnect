@@ -12,11 +12,12 @@ import com.example.learnconnect.models.User
 import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.UserFavoriteCourse
 import com.example.learnconnect.models.Video
+import com.example.learnconnect.models.VideoProgress
 
 
 @Database(
-    entities = [User::class, CourseType::class, Course::class, Video::class, UserCourse::class, UserFavoriteCourse::class],
-    version = 6,
+    entities = [User::class, CourseType::class, Course::class, Video::class, UserCourse::class, UserFavoriteCourse::class, VideoProgress::class],
+    version = 7,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase(){

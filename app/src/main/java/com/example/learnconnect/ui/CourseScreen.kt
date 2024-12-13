@@ -37,7 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import com.example.learnconnect.PreferencesManager
+import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.models.Video
 
@@ -54,23 +54,24 @@ fun CourseScreen(
     navController: NavController,
     courseId: Int,
 ) {
-
     Log.d("Course Id", courseId.toString())
     val videos by viewModel.videos.observeAsState(emptyList())
     val course by viewModel.course.observeAsState()
     val userId = PreferencesManager.getUserId(context = LocalContext.current)
     val isUserEnrolled by viewModel.result.observeAsState()
+    val userCourseSaved by viewModel.userCourseSaved.observeAsState()
 
     LaunchedEffect(courseId) {
         viewModel.loadVideos()
         viewModel.getCourse(courseId)
-        viewModel.isUserEnrolled(userId  ,courseId)
+        viewModel.isUserEnrolled(userId, courseId)
     }
+
+    // course ve isUserEnrolled logları
     course?.let { Log.d("Course Data", it.name) }
-
-     Log.d("IS ENROLL", isUserEnrolled.toString())
-
+    Log.d("IS ENROLL", isUserEnrolled.toString())
     Log.d("USER ID", userId.toString())
+
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
         topBar = {
@@ -94,18 +95,18 @@ fun CourseScreen(
                     }
                 },
                 actions = {
-                    if(isUserEnrolled == false) {
+                    if (isUserEnrolled == false) {
                         IconButton(onClick = {
+                            Log.d("CourseScreen save course", courseId.toString())
                             viewModel.saveUserCourse(userId = userId, courseId = courseId)
                         }) {
                             Icon(
-                                painter = painterResource(id =  R.drawable.plus_icon),
-                                contentDescription = "Back",
+                                painter = painterResource(id = R.drawable.plus_icon),
+                                contentDescription = "Add to Courses",
                                 tint = MaterialTheme.colorScheme.onSecondary,
                                 modifier = Modifier.size(60.dp)
                             )
                         }
-
                     }
                     Icon(
                         painter = painterResource(id = R.drawable.unfavorite_icon),
@@ -114,11 +115,11 @@ fun CourseScreen(
                             .clickable { onFavoriteClick() }
                             .size(50.dp)
                             .padding(top = 15.dp),
-                        tint =  MaterialTheme.colorScheme.onSecondary
+                        tint = MaterialTheme.colorScheme.onSecondary
                     )
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
+                    containerColor = MaterialTheme.colorScheme.secondary
                 )
             )
         }
@@ -141,13 +142,16 @@ fun CourseScreen(
                             video = video,
                             onNavigateToVideoPlayer = onNavigateToVideoPlayer
                         )
-
-
-
                     }
                 }
             }
-            Log.d("isssenrolled", isUserEnrolled.toString())
+            userCourseSaved?.let {
+                if (it) {
+                    Log.d("CourseScreen", "Course saved successfully")
+                } else {
+                    Log.d("CourseScreen", "Course save failed")
+                }
+            }
         }
     }
 }
@@ -168,7 +172,7 @@ fun VideoCard(
 
                 PreferencesManager.clearVideoLink(context)
                 PreferencesManager.saveVideoLink(context = context, video.url)
-                Log.d("Video Card içinde video url ",video.id.toString())
+                Log.d("Video Card içinde video url ", video.id.toString())
                 onNavigateToVideoPlayer(video.id)
 
             }

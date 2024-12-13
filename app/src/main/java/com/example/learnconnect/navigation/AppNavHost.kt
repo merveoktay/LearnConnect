@@ -2,11 +2,9 @@ package com.example.learnconnect.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.learnconnect.ui.CourseScreen
 import com.example.learnconnect.ui.CoursesScreen
 import com.example.learnconnect.ui.FavoriteScreen
@@ -21,7 +19,8 @@ import com.example.learnconnect.ui.VideoPlayerScreen
 import com.example.learnconnect.viewModels.CourseViewModel
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost( isDarkTheme: Boolean,
+                changeAppTheme: () -> Unit) {
     val navController = rememberNavController()
 
     NavHost(
@@ -84,6 +83,8 @@ fun AppNavHost() {
         }
         composable("profile") {
             ProfileScreen(
+                isDarkTheme = isDarkTheme,
+                changeAppTheme = changeAppTheme,
                 onNavigateToHome = { navController.navigate("home") },
                 onNavigateToFavorite = { navController.navigate("favorite") },
                 onNavigateToCourses = { navController.navigate("courses") }

@@ -1,4 +1,4 @@
-package com.example.learnconnect
+package com.example.learnconnect.utils
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -45,5 +45,14 @@ object PreferencesManager {
     fun clearVideoLink(context: Context) {
         val prefs = getSharedPreferences(PREFS_VIDEO,context)
         prefs.edit().remove(KEY_VİDEO_LINK).apply()
+    }
+
+    fun saveVideoProgress(context: Context, videoId: Int, progress: Long) {
+        val preferences = context.getSharedPreferences("video_progress", Context.MODE_PRIVATE)
+        preferences.edit().putLong("video_$videoId", progress).apply()
+    }
+    fun getVideoProgress(context: Context, videoId: Int): Long {
+        val preferences = context.getSharedPreferences("video_progress", Context.MODE_PRIVATE)
+        return preferences.getLong("video_$videoId", 0L)
     }
 }

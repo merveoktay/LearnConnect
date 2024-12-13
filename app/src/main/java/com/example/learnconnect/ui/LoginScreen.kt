@@ -24,7 +24,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.learnconnect.PreferencesManager
+import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.LoginViewModel
 

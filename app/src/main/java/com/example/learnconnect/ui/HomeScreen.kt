@@ -1,8 +1,6 @@
 package com.example.learnconnect.ui
 
-import android.util.Log
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -44,14 +42,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.learnconnect.PreferencesManager
 import com.example.learnconnect.R
-import com.example.learnconnect.theme.LearnConnectTheme
-import com.example.learnconnect.theme.ThemePreferences
 import com.example.learnconnect.viewModels.CourseViewModel
 
 @Composable
@@ -61,27 +55,24 @@ fun HomeScreen(
     onNavigateToCourses: () -> Unit,
     courseViewModel: CourseViewModel,
 ) {
-    val themePreferences= ThemePreferences(context = LocalContext.current)
-    val isDarkTheme = themePreferences.getDarkModeState()
 
     LaunchedEffect(Unit) {
         courseViewModel.loadCategories()
         courseViewModel.loadCourses()
-        themePreferences.getDarkModeState()
     }
     Scaffold(
         topBar = {
-            HomeTopBar(isDarkTheme)
+            HomeTopBar()
         },
         bottomBar = {
-            HomeBottomBar(onNavigateToProfile, onNavigateToCourses,isDarkTheme)
+            HomeBottomBar(onNavigateToProfile, onNavigateToCourses)
         },
         content = { innerPadding ->
             HomeContent(
                 modifier = Modifier.padding(innerPadding),
                 courseViewModel,
-                onNavigateToCourse,
-                isDarkTheme
+                onNavigateToCourse
+
             )
         }
     )
@@ -89,7 +80,7 @@ fun HomeScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeTopBar(isDarkTheme:Boolean) {
+fun HomeTopBar() {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.secondary
@@ -118,7 +109,6 @@ fun HomeContent(
     modifier: Modifier = Modifier,
     courseViewModel: CourseViewModel,
     onNavigateToCourse: (Int) -> Unit,
-    isDarkTheme:Boolean
 ) {
     var selectedCategory by remember { mutableStateOf<Int?>(null) }
     val categories by courseViewModel.categories.observeAsState(emptyList())
@@ -138,14 +128,13 @@ fun HomeContent(
                 item {
                     Chip(
                         text = "All Courses",
-                        onClick = { selectedCategory = null }, isDarkTheme
+                        onClick = { selectedCategory = null }
                     )
                 }
                 items(categories) { category ->
                     Chip(
                         text = category.name,
-                        onClick = { selectedCategory = category.id },
-                        isDarkTheme
+                        onClick = { selectedCategory = category.id }
                     )
                 }
             }
@@ -162,7 +151,7 @@ fun HomeContent(
                         imageUrl = course.course_image,
                         courseName = course.name,
                         onNavigateToCourse,
-                        course.id, isDarkTheme
+                        course.id
                     )
                 }
             }
@@ -171,8 +160,7 @@ fun HomeContent(
 
 
 @Composable
-fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit,isDarkTheme:Boolean) {
-    LearnConnectTheme(isDarkTheme = isDarkTheme) {
+fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
         BottomAppBar(
             containerColor = MaterialTheme.colorScheme.secondary
         ) {
@@ -216,10 +204,10 @@ fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Un
             }
         }
     }
-}
+
 
 @Composable
-fun Chip(text: String, onClick: () -> Unit,isDarkTheme:Boolean) {
+fun Chip(text: String, onClick: () -> Unit) {
         Surface(
             modifier = Modifier
                 .clickable { onClick() }
@@ -246,8 +234,7 @@ fun VideoCard(
     imageUrl: String,
     courseName: String,
     onNavigateToCourse: (Int) -> Unit,
-    courseId: Int,
-    isDarkTheme:Boolean
+    courseId: Int
 ) {
         Card(
             shape = RoundedCornerShape(16.dp),

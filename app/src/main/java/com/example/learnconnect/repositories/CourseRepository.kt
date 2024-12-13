@@ -34,6 +34,7 @@ class CourseRepository @Inject constructor(
     suspend fun getUserCourses(userId: Int): List<UserCourse> {
         return courseCategoryProvider.getUserCourses(userId)
     }
+
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
         return courseCategoryProvider.getCoursesByType(courseTypeId)
     }

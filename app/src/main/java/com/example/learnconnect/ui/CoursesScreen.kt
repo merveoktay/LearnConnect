@@ -43,7 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.example.learnconnect.PreferencesManager
+import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.CourseViewModel
 
@@ -82,7 +82,7 @@ fun CoursesContent(
     onNavigateToCourse: (Int) -> Unit,
 ) {
 
-    val userId=PreferencesManager.getUserId(context = LocalContext.current)
+    val userId= PreferencesManager.getUserId(context = LocalContext.current)
     var courseId by remember { mutableStateOf<Int?>(null) }
 
     val userCourses by courseViewModel.usercourses.observeAsState(initial = emptyList())
@@ -113,7 +113,7 @@ fun CoursesContent(
                     }
 
                     val currentCourse = courseViewModel.course.observeAsState().value
-                    Log.d("UserCourseName", currentCourse?.name ?: "")
+                    Log.d("UserCourseName", course?.name ?: "")
 
                     CoursesVideoCard(
                         imageUrl = currentCourse?.course_image ?: "",

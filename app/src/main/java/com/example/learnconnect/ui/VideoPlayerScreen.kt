@@ -1,44 +1,34 @@
 package com.example.learnconnect.ui
 
-
 import android.util.Log
 import androidx.media3.common.MediaItem
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
+import androidx.media3.common.MimeTypes
+import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.cache.CacheDataSource
-import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
-import androidx.media3.datasource.cache.SimpleCache
 import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
 import androidx.navigation.NavController
-import com.example.learnconnect.CacheManager
-import com.example.learnconnect.PreferencesManager
+import com.example.learnconnect.utils.CacheManager
+import com.example.learnconnect.utils.PreferencesManager
+import com.example.learnconnect.utils.PreferencesManager.getVideoProgress
+import com.example.learnconnect.utils.PreferencesManager.saveVideoProgress
 import com.example.learnconnect.viewModels.CourseViewModel
-import java.io.File
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,10 +38,10 @@ fun VideoPlayerScreen(
     navController: NavController,
     courseViewModel: CourseViewModel
 ) {
-
     LaunchedEffect(Unit) {
         courseViewModel.getVideoDetails(videoId = videoId)
     }
+
     val context = LocalContext.current
     val cache = CacheManager.getSimpleCache(context)
     val cacheDataSourceFactory = CacheDataSource.Factory()
@@ -71,28 +61,53 @@ fun VideoPlayerScreen(
         ExoPlayer.Builder(context)
             .setLoadControl(loadControl)
             .build()
+            .apply {
+                // Player.Listener kullanarak video ilerlemesini kaydet
+                addListener(object : Player.Listener {
+                    @Deprecated("Deprecated in Java")
+                    override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                        // Oynatma durumu değiştiğinde ilerlemeyi kaydet
+                        if (playbackState == Player.STATE_READY && playWhenReady) {
+                            val currentPosition = currentPosition
+                            saveVideoProgress(context, videoId, currentPosition)
+                        }
+                    }
+
+                    @Deprecated("Deprecated in Java")
+                    override fun onPositionDiscontinuity(reason: Int) {
+                        // Eğer pozisyon değiştiyse ilerlemeyi kaydedin
+                        val currentPosition = currentPosition
+                        saveVideoProgress(context, videoId, currentPosition)
+                    }
+
+                    // Diğer gerekli olayları burada dinleyebilirsiniz (örneğin, video bittiğinde).
+                })
+            }
     }
-    val  url=PreferencesManager.getVideoLink(context).toUri()
+
+    val url = PreferencesManager.getVideoLink(context).toUri()
     val mediaItem = MediaItem.fromUri(url)
     val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
         .createMediaSource(mediaItem)
+
     val video by courseViewModel.video.observeAsState()
-    Log.d("urlll için id", PreferencesManager.getVideoLink(context))
-    Log.d("urlll urlll", video?.url.toString())
+    val progress = getVideoProgress(context, videoId) // Kaydedilmiş ilerlemeyi alın
+
+    Log.d("Video Progress", "Video ID: $videoId, Progress: $progress")
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = video?.title ?: "", color = MaterialTheme.colorScheme.onSurface)
-                        Log.d("Video Title video player da", video?.title ?: "")},
+                title = { Text(text = video?.title ?: "", color = MaterialTheme.colorScheme.onSurface) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.surface, // Use surface color
-                    titleContentColor = MaterialTheme.colorScheme.onSurface, // Text color on surface
-                    actionIconContentColor = MaterialTheme.colorScheme.onSurface // Action icon color
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onSurface,
+                    actionIconContentColor = MaterialTheme.colorScheme.onSurface
                 )
             )
         }
@@ -106,6 +121,12 @@ fun VideoPlayerScreen(
                 },
                 update = {
                     exoPlayer.setMediaSource(mediaSource)
+
+                    // Kaldığınız yerden başlatın
+                    if (progress > 0) {
+                        exoPlayer.seekTo(progress)
+                    }
+
                     exoPlayer.prepare()
                     exoPlayer.playWhenReady = true
                 }
@@ -114,9 +135,16 @@ fun VideoPlayerScreen(
 
         DisposableEffect(context) {
             onDispose {
+                // Oynatıcıyı serbest bırakmadan önce ilerlemeyi kaydedin
+                val currentPosition = exoPlayer.currentPosition
+                saveVideoProgress(context, videoId, currentPosition)
+
+                // ExoPlayer ve Cache'i serbest bırakın
                 exoPlayer.release()
                 CacheManager.getSimpleCache(context).release()
+
             }
         }
     }
 }
+

@@ -29,6 +29,8 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     private val _usercourses = MutableLiveData<List<UserCourse>>()
     val usercourses: LiveData<List<UserCourse>> get() = _usercourses
 
+
+
     private val _course = MutableLiveData<Course>()
     val course: LiveData<Course> = _course
 
@@ -128,9 +130,14 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     }
     fun getUserCourses(userId: Int){
         viewModelScope.launch {
-            val fetchedCourse = courseRepository.getUserCourses(userId)
-            _usercourses.postValue(fetchedCourse)
+            try {
+                val fetchedCourses = courseRepository.getUserCourses(userId)
+                _usercourses.postValue(fetchedCourses)
+            } catch (e: Exception) {
+                Log.e("CourseViewModel", "Error fetching user courses: ${e.message}")
+            }
         }
+
 
     }
 
@@ -147,11 +154,14 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
             try {
 
                 courseRepository.saveUserCourse(userId, courseId)
-                _userCourseSaved.postValue(true)
+                _userCourseSaved.value=true
+
             } catch (e: Exception) {
-                _userCourseSaved.postValue(false)
+                _userCourseSaved.value=false
             }
         }
+        Log.d("User saved",courseId.toString())
+
     }
 
     fun isUserEnrolled(userId: Int, courseId: Int){
@@ -160,7 +170,6 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
         }
     }
-
 
     fun getVideoDetails(videoId: Int){
         viewModelScope.launch {
