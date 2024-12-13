@@ -15,6 +15,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -81,9 +82,9 @@ fun FavoriteContent(
     courseViewModel: CourseViewModel,
     onNavigateToVideo: () -> Unit,
 ) {
-    var selectedCategory by remember { mutableStateOf<Int?>(null) } // Seçili kategori ID'si
-    val categories by courseViewModel.categories.observeAsState(emptyList())
-    val courses by courseViewModel.courses.observeAsState(emptyList())
+    var selectedCategory by remember { mutableStateOf<Int?>(null) }
+    val categories by courseViewModel.categories.collectAsState()
+    val courses by courseViewModel.courses.collectAsState()
 
 
     Column(

@@ -15,6 +15,9 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(private val repository: UserRepository) : ViewModel() {
 
+    private val _user=MutableStateFlow<User>(User(0,"","",""))
+    val user:StateFlow<User> get()=_user
+
     private val _id = MutableStateFlow(0)
     val id: StateFlow<Int> = _id
     private val _email = MutableStateFlow("")
@@ -58,6 +61,13 @@ class LoginViewModel @Inject constructor(private val repository: UserRepository)
         Log.d("KULLANICI normal olan ID Si", _id.value.toString())
         val userid=_id.value
         return userid
+    }
+
+     fun getUser(userId:Int) {
+         viewModelScope.launch {
+             _user.value = repository.getUser(userId)!!
+         }
+
     }
 
 

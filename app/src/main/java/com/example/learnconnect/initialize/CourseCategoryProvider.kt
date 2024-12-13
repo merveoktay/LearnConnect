@@ -5,7 +5,6 @@ import com.example.learnconnect.dao.CourseDao
 import com.example.learnconnect.models.Video
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
-import com.example.learnconnect.models.UserCourse
 import javax.inject.Inject
 
 class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDao) {
@@ -305,53 +304,4 @@ class CourseCategoryProvider @Inject constructor(private val courseDao: CourseDa
             Log.e("Database", "Error inserting videos: ${e.message}")
         }
     }
-
-    suspend fun getVideos(): List<Video> {
-        Log.d("video", courseDao.getAllVideos().toString())
-        return courseDao.getAllVideos()
-    }
-
-    suspend fun getVideosByCourse(courseId: Int): List<Video> {
-        return courseDao.getVideosByCourse(courseId)
-    }
-
-    suspend fun getCategories(): List<CourseType> {
-        Log.d("categories", courseDao.getAllCourseTypes().toString())
-        return courseDao.getAllCourseTypes()
-    }
-
-    suspend fun getCourses(): List<Course> {
-        Log.d("course", courseDao.getAllCourse().toString())
-        return courseDao.getAllCourse()
-    }
-    suspend fun getCourse(courseId:Int): Course {
-        Log.d("getCourse", courseDao.getAllCourse().toString())
-        return courseDao.getCourse(courseId)
-    }
-    suspend fun getUserCourses(userId:Int): List<UserCourse> {
-        Log.d("course", courseDao.getUserCourses(userId).toString())
-        return courseDao.getUserCourses(userId)
-    }
-
-    suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
-        return courseDao.getAllCoursesByType(courseTypeId)
-    }
-    suspend fun insertCourseForUser(userId: Int,courseId: Int){
-        val userCourse=UserCourse(user_id = userId, course_id = courseId)
-        return courseDao.insertUserCourse(userCourse =userCourse)
-    }
-
-    suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean {
-        return courseDao.isUserEnrolled(userId, courseId)
-    }
-    suspend fun getVideoById(videoId: Int): Video {
-        return courseDao.getVideoById(videoId)
-    }
-
-
-
-
-
-
-
 }

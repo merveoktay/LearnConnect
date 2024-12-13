@@ -1,5 +1,7 @@
 package com.example.learnconnect.repositories
 
+import android.util.Log
+import com.example.learnconnect.dao.CourseDao
 import com.example.learnconnect.initialize.CourseCategoryProvider
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
@@ -7,7 +9,7 @@ import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.Video
 import javax.inject.Inject
 
-class CourseRepository @Inject constructor(
+class CourseRepository @Inject constructor(private val courseDao: CourseDao,
     private val courseCategoryProvider: CourseCategoryProvider
 ) {
     suspend fun initializeAllCategories() {
@@ -20,36 +22,41 @@ class CourseRepository @Inject constructor(
         courseCategoryProvider.initializeVideos()
     }
     suspend fun getCategories(): List<CourseType> {
-        return courseCategoryProvider.getCategories()
+        Log.d("categories", courseDao.getAllCourseTypes().toString())
+        return courseDao.getAllCourseTypes()
     }
     suspend fun getCourses(): List<Course> {
-        return courseCategoryProvider.getCourses()
+        Log.d("course", courseDao.getAllCourse().toString())
+        return courseDao.getAllCourse()
     }
-    suspend fun getCourse(courseId: Int): Course {
-        return courseCategoryProvider.getCourse(courseId)
+    suspend fun getCourse(courseId:Int): Course {
+        Log.d("getCourse", courseDao.getAllCourse().toString())
+        return courseDao.getCourse(courseId)
     }
     suspend fun getVideos(): List<Video> {
-        return courseCategoryProvider.getVideos()
+        Log.d("video", courseDao.getAllVideos().toString())
+        return courseDao.getAllVideos()
     }
-    suspend fun getUserCourses(userId: Int): List<UserCourse> {
-        return courseCategoryProvider.getUserCourses(userId)
+    suspend fun getUserCourses(userId:Int): List<UserCourse> {
+        Log.d("course", courseDao.getUserCourses(userId).toString())
+        return courseDao.getUserCourses(userId)
     }
-
     suspend fun getCoursesByType(courseTypeId: Int): List<Course> {
-        return courseCategoryProvider.getCoursesByType(courseTypeId)
+        return courseDao.getAllCoursesByType(courseTypeId)
     }
     suspend fun getVideosByCourseId(courseId: Int): List<Video> {
-        return courseCategoryProvider.getVideosByCourse(courseId)
+        return courseDao.getVideosByCourse(courseId)
     }
     suspend fun saveUserCourse( userId: Int,courseId: Int) {
-      courseCategoryProvider.insertCourseForUser(userId, courseId)
+        val userCourse=UserCourse(user_id = userId, course_id = courseId)
+        return courseDao.insertUserCourse(userCourse =userCourse)
     }
 
-    suspend fun isUserEnrolled(courseId: Int, userId: Int):Boolean {
-       return courseCategoryProvider.isUserEnrolled(userId, courseId)
+    suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean {
+        return courseDao.isUserEnrolled(userId, courseId)
     }
-    suspend fun getVideoById(videoId:Int):Video{
-        return courseCategoryProvider.getVideoById(videoId)
+    suspend fun getVideoById(videoId: Int): Video {
+        return courseDao.getVideoById(videoId)
     }
 
 }

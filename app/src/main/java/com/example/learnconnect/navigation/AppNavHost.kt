@@ -82,7 +82,9 @@ fun AppNavHost( isDarkTheme: Boolean,
             )
         }
         composable("profile") {
+            val loginViewModel: LoginViewModel = hiltViewModel()
             ProfileScreen(
+                loginViewModel=loginViewModel,
                 isDarkTheme = isDarkTheme,
                 changeAppTheme = changeAppTheme,
                 onNavigateToHome = { navController.navigate("home") },

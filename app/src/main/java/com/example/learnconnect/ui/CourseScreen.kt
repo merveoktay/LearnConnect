@@ -27,6 +27,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -55,22 +56,17 @@ fun CourseScreen(
     courseId: Int,
 ) {
     Log.d("Course Id", courseId.toString())
-    val videos by viewModel.videos.observeAsState(emptyList())
-    val course by viewModel.course.observeAsState()
-    val userId = PreferencesManager.getUserId(context = LocalContext.current)
-    val isUserEnrolled by viewModel.result.observeAsState()
-    val userCourseSaved by viewModel.userCourseSaved.observeAsState()
-
+    val videos by viewModel.videos.collectAsState()
+    val course by viewModel.course.collectAsState()
+    val userId = loginViewModel.getUserId()
+    val isUserEnrolled by viewModel.isEnrolled.collectAsState()
     LaunchedEffect(courseId) {
         viewModel.loadVideos()
         viewModel.getCourse(courseId)
         viewModel.isUserEnrolled(userId, courseId)
     }
 
-    // course ve isUserEnrolled logları
-    course?.let { Log.d("Course Data", it.name) }
-    Log.d("IS ENROLL", isUserEnrolled.toString())
-    Log.d("USER ID", userId.toString())
+    course.let { Log.d("Course Data", it.name) }
 
     Scaffold(
         containerColor = MaterialTheme.colorScheme.background,
@@ -95,7 +91,7 @@ fun CourseScreen(
                     }
                 },
                 actions = {
-                    if (isUserEnrolled == false) {
+                    if (!isUserEnrolled) {
                         IconButton(onClick = {
                             Log.d("CourseScreen save course", courseId.toString())
                             viewModel.saveUserCourse(userId = userId, courseId = courseId)
@@ -136,20 +132,11 @@ fun CourseScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 items(videos.filter { it.course_id == courseId }) { video ->
-                    course?.let {
-                        VideoCard(
-                            imageUrl = it.course_image,
-                            video = video,
-                            onNavigateToVideoPlayer = onNavigateToVideoPlayer
-                        )
-                    }
-                }
-            }
-            userCourseSaved?.let {
-                if (it) {
-                    Log.d("CourseScreen", "Course saved successfully")
-                } else {
-                    Log.d("CourseScreen", "Course save failed")
+                    VideoCard(
+                        imageUrl = course.course_image,
+                        video = video,
+                        onNavigateToVideoPlayer = onNavigateToVideoPlayer
+                    )
                 }
             }
         }

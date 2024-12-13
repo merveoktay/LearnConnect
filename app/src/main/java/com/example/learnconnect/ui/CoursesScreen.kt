@@ -31,6 +31,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -83,10 +84,10 @@ fun CoursesContent(
 ) {
 
     val userId= PreferencesManager.getUserId(context = LocalContext.current)
-    var courseId by remember { mutableStateOf<Int?>(null) }
+    val courseId by remember { mutableStateOf<Int?>(null) }
 
-    val userCourses by courseViewModel.usercourses.observeAsState(initial = emptyList())
-    val course by courseViewModel.course.observeAsState()
+    val userCourses by courseViewModel.usercourses.collectAsState()
+    val course by courseViewModel.course.collectAsState()
 
     LaunchedEffect(userId,courseId) {
         courseViewModel.getUserCourses(userId)
@@ -103,25 +104,23 @@ fun CoursesContent(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
 
-            userCourses.let { courseList ->
-                items(courseList) { userCourse ->
-                    val currentCourseId = userCourse.course_id
-                    Log.d("UserCourse", currentCourseId.toString())
+            items(userCourses) { userCourse ->
+                val currentCourseId = userCourse.course_id
+                Log.d("UserCourse", currentCourseId.toString())
 
-                    LaunchedEffect(currentCourseId) {
-                        courseViewModel.getCourse(currentCourseId)
-                    }
-
-                    val currentCourse = courseViewModel.course.observeAsState().value
-                    Log.d("UserCourseName", course?.name ?: "")
-
-                    CoursesVideoCard(
-                        imageUrl = currentCourse?.course_image ?: "",
-                        courseName = currentCourse?.name ?: "Unknown",
-                        courseId = currentCourse?.id ?: 0,
-                        onNavigateToCourse
-                    )
+                LaunchedEffect(currentCourseId) {
+                    courseViewModel.getCourse(currentCourseId)
                 }
+
+                val currentCourse = courseViewModel.course.collectAsState()
+                Log.d("UserCourseName", course.name ?: "")
+
+                CoursesVideoCard(
+                    imageUrl = currentCourse.value.course_image,
+                    courseName = currentCourse.value.name,
+                    courseId = currentCourse.value.id,
+                    onNavigateToCourse
+                )
             }
         }
     }

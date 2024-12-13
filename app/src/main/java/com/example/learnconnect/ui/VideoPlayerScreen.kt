@@ -8,18 +8,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.net.toUri
-import androidx.media3.common.MimeTypes
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.datasource.cache.CacheDataSource
 import androidx.media3.exoplayer.DefaultLoadControl
-import androidx.media3.exoplayer.DefaultRenderersFactory
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.PlayerView
@@ -62,11 +59,9 @@ fun VideoPlayerScreen(
             .setLoadControl(loadControl)
             .build()
             .apply {
-                // Player.Listener kullanarak video ilerlemesini kaydet
                 addListener(object : Player.Listener {
                     @Deprecated("Deprecated in Java")
                     override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                        // Oynatma durumu değiştiğinde ilerlemeyi kaydet
                         if (playbackState == Player.STATE_READY && playWhenReady) {
                             val currentPosition = currentPosition
                             saveVideoProgress(context, videoId, currentPosition)
@@ -75,12 +70,10 @@ fun VideoPlayerScreen(
 
                     @Deprecated("Deprecated in Java")
                     override fun onPositionDiscontinuity(reason: Int) {
-                        // Eğer pozisyon değiştiyse ilerlemeyi kaydedin
                         val currentPosition = currentPosition
                         saveVideoProgress(context, videoId, currentPosition)
                     }
 
-                    // Diğer gerekli olayları burada dinleyebilirsiniz (örneğin, video bittiğinde).
                 })
             }
     }
@@ -90,8 +83,8 @@ fun VideoPlayerScreen(
     val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
         .createMediaSource(mediaItem)
 
-    val video by courseViewModel.video.observeAsState()
-    val progress = getVideoProgress(context, videoId) // Kaydedilmiş ilerlemeyi alın
+    val video by courseViewModel.video.collectAsState()
+    val progress = getVideoProgress(context, videoId)
 
     Log.d("Video Progress", "Video ID: $videoId, Progress: $progress")
 
@@ -122,7 +115,6 @@ fun VideoPlayerScreen(
                 update = {
                     exoPlayer.setMediaSource(mediaSource)
 
-                    // Kaldığınız yerden başlatın
                     if (progress > 0) {
                         exoPlayer.seekTo(progress)
                     }
@@ -135,11 +127,9 @@ fun VideoPlayerScreen(
 
         DisposableEffect(context) {
             onDispose {
-                // Oynatıcıyı serbest bırakmadan önce ilerlemeyi kaydedin
                 val currentPosition = exoPlayer.currentPosition
                 saveVideoProgress(context, videoId, currentPosition)
 
-                // ExoPlayer ve Cache'i serbest bırakın
                 exoPlayer.release()
                 CacheManager.getSimpleCache(context).release()
 

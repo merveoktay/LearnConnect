@@ -12,6 +12,8 @@ import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.Video
 import com.example.learnconnect.repositories.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -19,41 +21,36 @@ import javax.inject.Inject
 class CourseViewModel @Inject constructor(private val courseRepository: CourseRepository) :
     ViewModel() {
 
-    private val _categories = MutableLiveData<List<CourseType>>()
-    val categories: LiveData<List<CourseType>> get() = _categories
+    private val _categories = MutableStateFlow<List<CourseType>>(emptyList())
+    val categories: StateFlow<List<CourseType>> get() = _categories
+
+    private val _courses = MutableStateFlow<List<Course>>(emptyList())
+    val courses: StateFlow<List<Course>> get() = _courses
+
+    private val _usercourses = MutableStateFlow<List<UserCourse>>(emptyList())
+    val usercourses: StateFlow<List<UserCourse>> get() = _usercourses
+
+    private val _course = MutableStateFlow<Course>(Course(0,"","",0))
+    val course: StateFlow<Course> = _course
+
+    private val _videos = MutableStateFlow<List<Video>>(emptyList())
+    val videos: StateFlow<List<Video>> get() = _videos
+
+    private val _video = MutableStateFlow<Video>(Video(0,"","",0))
+    val video: StateFlow<Video> get() = _video
+
+    private val _isEnrolled = MutableStateFlow<Boolean>(false)
+    val isEnrolled: StateFlow<Boolean> get() = _isEnrolled
+
+    private val _filteredVideos = MutableStateFlow<List<Video>>(emptyList())
+    val filteredVideos: StateFlow<List<Video>> get() = _filteredVideos
+
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> get() = _searchQuery
 
 
-    private val _courses = MutableLiveData<List<Course>>()
-    val courses: LiveData<List<Course>> get() = _courses
-
-    private val _usercourses = MutableLiveData<List<UserCourse>>()
-    val usercourses: LiveData<List<UserCourse>> get() = _usercourses
-
-
-
-    private val _course = MutableLiveData<Course>()
-    val course: LiveData<Course> = _course
-
-    private val _videos = MutableLiveData<List<Video>>()
-    val videos: LiveData<List<Video>> get() = _videos
-
-    private val _video = MutableLiveData<Video>()
-    val video: LiveData<Video> get() = _video
-
-    private val _result = MutableLiveData<Boolean>()
-    val result: LiveData<Boolean> get() = _result
-
-    private val _filteredVideos = MediatorLiveData<List<Video>>()
-    val filteredVideos: LiveData<List<Video>> get() = _filteredVideos
-
-    private val _searchQuery = MutableLiveData("")
-    val searchQuery: LiveData<String> get() = _searchQuery
-
-    private val _userCourseSaved = MutableLiveData<Boolean>()
-    val userCourseSaved: LiveData<Boolean> get() = _userCourseSaved
-
-    private val _filteredCourses = MutableLiveData<List<Course>>()
-    val filteredCourses: LiveData<List<Course>> get() = _filteredCourses
+    private val _filteredCourses = MutableStateFlow<List<Course>>(emptyList())
+    val filteredCourses: StateFlow<List<Course>> get() = _filteredCourses
 
 
     init {
@@ -112,27 +109,27 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     }
 
     fun getCoursesByCategory(categoryId: Int): List<Course> {
-        return _courses.value?.filter { it.course_type_id == categoryId } ?: emptyList()
+        return _courses.value.filter { it.course_type_id == categoryId } ?: emptyList()
     }
 
     fun getVideosForCourse(courseId: Int) {
         viewModelScope.launch {
             val videoList = courseRepository.getVideosByCourseId(courseId)
-            _videos.postValue(videoList)
+            _videos.value=videoList
         }
     }
 
     fun getCourse(courseId: Int) {
         viewModelScope.launch {
             val fetchedCourse = courseRepository.getCourse(courseId)
-            _course.postValue(fetchedCourse)
+            _course.value=fetchedCourse
         }
     }
     fun getUserCourses(userId: Int){
         viewModelScope.launch {
             try {
                 val fetchedCourses = courseRepository.getUserCourses(userId)
-                _usercourses.postValue(fetchedCourses)
+                _usercourses.value=fetchedCourses
             } catch (e: Exception) {
                 Log.e("CourseViewModel", "Error fetching user courses: ${e.message}")
             }
@@ -152,12 +149,11 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     fun saveUserCourse( userId: Int,courseId: Int) {
         viewModelScope.launch {
             try {
-
                 courseRepository.saveUserCourse(userId, courseId)
-                _userCourseSaved.value=true
+                _isEnrolled.value=true
 
             } catch (e: Exception) {
-                _userCourseSaved.value=false
+                _isEnrolled.value=false
             }
         }
         Log.d("User saved",courseId.toString())
@@ -166,7 +162,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     fun isUserEnrolled(userId: Int, courseId: Int){
         viewModelScope.launch {
-            _result.value = courseRepository.isUserEnrolled(userId, courseId)
+            _isEnrolled.value = courseRepository.isUserEnrolled(userId, courseId)
 
         }
     }
@@ -174,7 +170,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     fun getVideoDetails(videoId: Int){
         viewModelScope.launch {
             val fetchedVideo = courseRepository.getVideoById(videoId)
-            _video.postValue(fetchedVideo)
+            _video.value=fetchedVideo
         }
     }
 

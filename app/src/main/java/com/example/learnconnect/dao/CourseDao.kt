@@ -23,7 +23,7 @@ interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertVideo(videos: Video)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUserCourse(userCourse: UserCourse)
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUserFavoriteCourse(userFavoriteCourse: UserFavoriteCourse)
@@ -54,7 +54,7 @@ interface CourseDao {
     @Query("SELECT * FROM user_favorite_courses WHERE user_id = :userId")
     suspend fun getUserFavoriteCourses(userId: Int): List<UserFavoriteCourse>
 
-    @Query("SELECT EXISTS(SELECT 1 FROM user_courses WHERE user_id = :userId AND course_id = :courseId)")
+    @Query("SELECT COUNT(*) FROM user_courses WHERE user_id = :userId AND course_id = :courseId")
     suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean
 
     @Query("SELECT * FROM videos WHERE id = :videoId LIMIT 1")

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -28,22 +29,40 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.learnconnect.R
+import com.example.learnconnect.models.User
+import com.example.learnconnect.utils.PreferencesManager
+import com.example.learnconnect.viewModels.LoginViewModel
+import java.util.Locale
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @Composable
 fun ProfileScreen(
+    loginViewModel: LoginViewModel = hiltViewModel(),
     isDarkTheme: Boolean,
     changeAppTheme: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToFavorite: () -> Unit,
     onNavigateToCourses: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val userId = PreferencesManager.getUserId(context)
+    val user by loginViewModel.user.collectAsState()
+    LaunchedEffect(userId){
+        loginViewModel.getUser(userId)
+    }
         Log.d("isDarkTheme",isDarkTheme.toString())
         Scaffold(
             topBar = {
@@ -54,6 +73,7 @@ fun ProfileScreen(
             },
             content = { innerPadding ->
                 ProfileContent(
+                    user =user,
                     modifier = Modifier.padding(innerPadding),
                     onNavigateToFavorite,
                     isDarkTheme = isDarkTheme,
@@ -134,11 +154,13 @@ fun ProfileBottomBar(onNavigateToHome: () -> Unit, onNavigateToCourses: () -> Un
 
 @Composable
 fun ProfileContent(
+    user: User,
     modifier: Modifier = Modifier,
     onNavigateToFavorite: () -> Unit,
     isDarkTheme: Boolean,
     changeAppTheme: () -> Unit,
 ) {
+
         Box(
             modifier = modifier
                 .fillMaxSize()
@@ -151,16 +173,24 @@ fun ProfileContent(
                 horizontalAlignment = Alignment.Start
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
-                Text(
-                    text = "USER NAME",
-                    modifier = Modifier.padding(16.dp),
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(60.dp), // Ensures it doesn't overflow vertically
+                    contentAlignment = Alignment.Center // Centers content horizontally within the box
+                ) {
+                    Text(
+                        text = user.username.uppercase(Locale.getDefault()),
+
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+                }
                 Spacer(modifier = Modifier.height(30.dp))
                 TextButton(onClick = { onNavigateToFavorite() }) {
                     Text(
-                        text = "❤ My Favorite Course ❤",
+                        text = "My Favorite Course ❤",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
