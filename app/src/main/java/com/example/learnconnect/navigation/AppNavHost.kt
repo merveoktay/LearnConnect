@@ -103,14 +103,12 @@ fun AppNavHost( isDarkTheme: Boolean,
         composable("course/{courseId}") { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull() ?: 0
             val courseViewModel: CourseViewModel = hiltViewModel()
-            val loginViewModel: LoginViewModel = hiltViewModel()
             CourseScreen(
                 viewModel = courseViewModel,
                 onNavigateToVideoPlayer = { videoId ->
                     navController.navigate("video/$videoId")
                 },
                 courseId = courseId,
-                onFavoriteClick = { /* Favorite işlemini burada tanımlayın */ },
                 navController = navController,
             )
         }

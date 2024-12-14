@@ -70,4 +70,13 @@ class CourseRepository @Inject constructor(private val courseDao: CourseDao,
         Log.d("course", courseDao.getUserCourses(userId).toString())
         return courseDao.getUserFavoriteCourses(userId)
     }
+
+    suspend fun removeCourseFromFavorites(userId: Int, courseId: Int):Boolean{
+        return try {
+            courseDao.removeCourseFromFavorites(userId, courseId)
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
 }

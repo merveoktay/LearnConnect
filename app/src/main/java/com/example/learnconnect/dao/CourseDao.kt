@@ -82,4 +82,12 @@ interface CourseDao {
 
     @Query("SELECT progress FROM video_progress WHERE videoId = :videoId LIMIT 1")
     suspend fun getProgress(videoId: Int): Long
+
+    @Query(
+        """
+        DELETE FROM user_favorite_courses
+        WHERE user_id = :userId AND course_id = :courseId
+        """
+    )
+    suspend fun removeCourseFromFavorites(userId: Int, courseId: Int)
 }

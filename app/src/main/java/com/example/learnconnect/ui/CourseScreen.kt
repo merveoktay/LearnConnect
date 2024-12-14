@@ -60,7 +60,6 @@ import com.example.learnconnect.ui.components.PlayIconWithCircle
 fun CourseScreen(
     viewModel: CourseViewModel = hiltViewModel(),
     onNavigateToVideoPlayer: (Int) -> Unit,
-    onFavoriteClick: () -> Unit,
     navController: NavController,
     courseId: Int,
 ) {
@@ -70,10 +69,12 @@ fun CourseScreen(
     val course by viewModel.course.collectAsState()
     val userId = PreferencesManager.getUserId(context)
     val isUserEnrolled by viewModel.isEnrolled.collectAsState()
+    val isFavorite by viewModel.isFavorite.collectAsState()
     LaunchedEffect(courseId) {
         viewModel.loadVideos()
         viewModel.getCourse(courseId)
         viewModel.isUserEnrolled(userId, courseId)
+        viewModel.isUserFavorite(userId, courseId)
     }
 
     course.let { Log.d("Course Data", it.name) }
@@ -112,15 +113,36 @@ fun CourseScreen(
                             )
                         }
                     }
-                    Icon(
-                        painter = painterResource(id = R.drawable.unfavorite_icon),
-                        contentDescription = "Favorite",
-                        modifier = Modifier
-                            .clickable { onFavoriteClick() }
-                            .size(50.dp)
-                            .padding(top = 15.dp),
-                        tint = MaterialTheme.colorScheme.onSecondary
-                    )
+                    if(!isFavorite) {
+                        IconButton(onClick = {
+                            Log.d("CourseScreen save course", courseId.toString())
+                            viewModel.saveUserFavoriteCourse(userId = userId, courseId = courseId)
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.unfavorite_icon),
+                                contentDescription = "Favorite",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(top = 15.dp),
+                                tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
+                    else {
+                        IconButton(onClick = {
+                            Log.d("CourseScreen save course", courseId.toString())
+                            viewModel.removeCourseFromFavorites(userId = userId, courseId = courseId)
+                        }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.favorite_icon),
+                                contentDescription = "Favorite",
+                                modifier = Modifier
+                                    .size(50.dp)
+                                    .padding(top = 15.dp),
+                                tint = MaterialTheme.colorScheme.onSecondary
+                            )
+                        }
+                    }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.secondary
@@ -160,7 +182,7 @@ fun VideoCard(
     onNavigateToVideoPlayer: (Int) -> Unit,
 ) {
     val context = LocalContext.current
-    var showDialog by remember { mutableStateOf(false) } // Popup kontrolü için bir state
+    var showDialog by remember { mutableStateOf(false) }
 
     Card(
         shape = RoundedCornerShape(16.dp),

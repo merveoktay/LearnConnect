@@ -29,13 +29,13 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     private val _userFavoriteCourses = MutableStateFlow<List<Course>>(emptyList())
     val userFavoriteCourses: StateFlow<List<Course>> get() = _userFavoriteCourses
 
-    private val _course = MutableStateFlow<Course>(Course(0,"","",0))
+    private val _course = MutableStateFlow<Course>(Course(0, "", "", 0))
     val course: StateFlow<Course> = _course
 
     private val _videos = MutableStateFlow<List<Video>>(emptyList())
     val videos: StateFlow<List<Video>> get() = _videos
 
-    private val _video = MutableStateFlow<Video>(Video(0,"","",0))
+    private val _video = MutableStateFlow<Video>(Video(0, "", "", 0))
     val video: StateFlow<Video> get() = _video
 
     private val _isEnrolled = MutableStateFlow<Boolean>(false)
@@ -43,6 +43,10 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _isFavorite = MutableStateFlow<Boolean>(false)
     val isFavorite: StateFlow<Boolean> get() = _isFavorite
+
+    private val _isFavoriteDeleted = MutableStateFlow<Boolean>(false)
+    val isFavoriteDeleted: StateFlow<Boolean> get() = _isFavoriteDeleted
+
 
     private val _filteredVideos = MutableStateFlow<List<Video>>(emptyList())
     val filteredVideos: StateFlow<List<Video>> get() = _filteredVideos
@@ -103,35 +107,36 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     }
 
     private fun filterCourses() {
-        val query = searchQuery.value.orEmpty()
-        val courses = _courses.value.orEmpty()
+        val query = searchQuery.value
+        val courses = _courses.value
         _filteredCourses.value = courses.filter { course ->
             course.name.contains(query, ignoreCase = true)
         }
     }
 
     fun getCoursesByCategory(categoryId: Int): List<Course> {
-        return _courses.value.filter { it.course_type_id == categoryId } ?: emptyList()
+        return _courses.value.filter { it.course_type_id == categoryId }
     }
 
     fun getVideosForCourse(courseId: Int) {
         viewModelScope.launch {
             val videoList = courseRepository.getVideosByCourseId(courseId)
-            _videos.value=videoList
+            _videos.value = videoList
         }
     }
 
     fun getCourse(courseId: Int) {
         viewModelScope.launch {
             val fetchedCourse = courseRepository.getCourse(courseId)
-            _course.value=fetchedCourse
+            _course.value = fetchedCourse
         }
     }
-    fun getUserCourses(userId: Int){
+
+    fun getUserCourses(userId: Int) {
         viewModelScope.launch {
             try {
                 val fetchedCourses = courseRepository.getUserCourses(userId)
-                _userCourses.value=fetchedCourses
+                _userCourses.value = fetchedCourses
             } catch (e: Exception) {
                 Log.e("CourseViewModel", "Error fetching user courses: ${e.message}")
             }
@@ -139,11 +144,12 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
 
     }
-    fun getUserFavoriteCourses(userId: Int){
+
+    fun getUserFavoriteCourses(userId: Int) {
         viewModelScope.launch {
             try {
                 val fetchedCourses = courseRepository.getUserFavoriteCourses(userId)
-                _userFavoriteCourses.value=fetchedCourses
+                _userFavoriteCourses.value = fetchedCourses
             } catch (e: Exception) {
                 Log.e("CourseViewModel", "Error fetching user favorite courses: ${e.message}")
             }
@@ -153,58 +159,65 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     }
 
     private fun filterVideos() {
-        val query = searchQuery.value.orEmpty()
-        val videos = _videos.value.orEmpty()
+        val query = searchQuery.value
+        val videos = _videos.value
         _filteredVideos.value = videos.filter { video ->
             video.title.contains(query, ignoreCase = true)
         }
     }
 
-    fun saveUserCourse( userId: Int,courseId: Int) {
+    fun saveUserCourse(userId: Int, courseId: Int) {
         viewModelScope.launch {
             try {
                 courseRepository.saveUserCourse(userId, courseId)
-                _isEnrolled.value=true
+                _isEnrolled.value = true
 
             } catch (e: Exception) {
-                _isEnrolled.value=false
+                _isEnrolled.value = false
             }
         }
-        Log.d("User saved",courseId.toString())
+        Log.d("User saved", courseId.toString())
 
     }
-    fun saveUserFavoriteCourse( userId: Int,courseId: Int) {
+
+    fun saveUserFavoriteCourse(userId: Int, courseId: Int) {
         viewModelScope.launch {
             try {
                 courseRepository.saveUserFavoriteCourse(userId, courseId)
-                _isFavorite.value=true
+                _isFavorite.value = true
 
             } catch (e: Exception) {
-                _isFavorite.value=false
+                _isFavorite.value = false
             }
         }
-        Log.d("User Favorite saved",courseId.toString())
+        Log.d("User Favorite saved", courseId.toString())
 
     }
 
-    fun isUserFavorite(userId: Int, courseId: Int){
+    fun isUserFavorite(userId: Int, courseId: Int) {
         viewModelScope.launch {
             _isFavorite.value = courseRepository.isUserFavorite(userId, courseId)
 
         }
     }
 
-    fun isUserEnrolled(userId: Int, courseId: Int){
+    fun isUserEnrolled(userId: Int, courseId: Int) {
         viewModelScope.launch {
             _isEnrolled.value = courseRepository.isUserEnrolled(userId, courseId)
 
         }
     }
 
-    fun getVideoDetails(videoId: Int){
+    fun getVideoDetails(videoId: Int) {
         viewModelScope.launch {
             val fetchedVideo = courseRepository.getVideoById(videoId)
-            _video.value=fetchedVideo
+            _video.value = fetchedVideo
+        }
+    }
+
+    fun removeCourseFromFavorites(userId: Int, courseId: Int) {
+        viewModelScope.launch {
+            _isFavoriteDeleted.value = courseRepository.removeCourseFromFavorites(userId, courseId)
         }
     }
 
