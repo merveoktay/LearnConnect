@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -100,46 +101,51 @@ fun CourseScreen(
                     }
                 },
                 actions = {
-                    if (!isUserEnrolled) {
-                        IconButton(onClick = {
-                            Log.d("CourseScreen save course", courseId.toString())
-                            viewModel.saveUserCourse(userId = userId, courseId = courseId)
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.plus_icon),
-                                contentDescription = "Add to Courses",
-                                tint = MaterialTheme.colorScheme.onSecondary,
-                                modifier = Modifier.size(60.dp)
-                            )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp), // İkonların yatayda düzenlenmesi için padding
+                        horizontalArrangement = Arrangement.End, // İkonları sağa hizalamak için
+                        verticalAlignment = Alignment.CenterVertically // İkonları dikeyde ortalamak için
+                    ) {
+                        if (!isUserEnrolled) {
+                            IconButton(onClick = {
+                                Log.d("CourseScreen save course", courseId.toString())
+                                viewModel.saveUserCourse(userId = userId, courseId = courseId)
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.plus_icon),
+                                    contentDescription = "Add to Courses",
+                                    tint = MaterialTheme.colorScheme.onSecondary,
+                                    modifier = Modifier.size(60.dp)
+                                )
+                            }
                         }
-                    }
-                    if(!isFavorite) {
-                        IconButton(onClick = {
-                            Log.d("CourseScreen save course", courseId.toString())
-                            viewModel.saveUserFavoriteCourse(userId = userId, courseId = courseId)
-                        }) {
+
+
+                        IconButton(
+                            onClick = {
+                                if (!isFavorite) {
+                                    viewModel.saveUserFavoriteCourse(
+                                        userId = userId,
+                                        courseId = courseId
+                                    )
+                                } else {
+                                    viewModel.removeCourseFromFavorites(
+                                        userId = userId,
+                                        courseId = courseId
+                                    )
+                                }
+                            }
+                        ) {
                             Icon(
-                                painter = painterResource(id = R.drawable.unfavorite_icon),
+                                painter = painterResource(
+                                    id = if (isFavorite) R.drawable.favorite_icon else R.drawable.unfavorite_icon
+                                ),
                                 contentDescription = "Favorite",
                                 modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(top = 15.dp),
-                                tint = MaterialTheme.colorScheme.onSecondary
-                            )
-                        }
-                    }
-                    else {
-                        IconButton(onClick = {
-                            Log.d("CourseScreen save course", courseId.toString())
-                            viewModel.removeCourseFromFavorites(userId = userId, courseId = courseId)
-                        }) {
-                            Icon(
-                                painter = painterResource(id = R.drawable.favorite_icon),
-                                contentDescription = "Favorite",
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .padding(top = 15.dp),
-                                tint = MaterialTheme.colorScheme.onSecondary
+                                    .size(30.dp),
+                                tint = MaterialTheme.colorScheme.primary
                             )
                         }
                     }

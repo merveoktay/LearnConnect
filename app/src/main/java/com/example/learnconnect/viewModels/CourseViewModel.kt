@@ -218,6 +218,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     fun removeCourseFromFavorites(userId: Int, courseId: Int) {
         viewModelScope.launch {
             _isFavoriteDeleted.value = courseRepository.removeCourseFromFavorites(userId, courseId)
+            _isFavorite.value = false
         }
     }
 

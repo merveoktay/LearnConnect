@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -22,8 +21,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
@@ -35,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.learnconnect.R
 import com.example.learnconnect.models.User
+import com.example.learnconnect.ui.components.DarkModeToggle
 import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.viewModels.LoginViewModel
 import java.util.Locale
@@ -190,54 +187,20 @@ fun ProfileContent(
                 TextButton(onClick = { onNavigateToFavorite() }) {
                     Text(
                         text = "My Favorite Course ❤",
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                 }
-                Spacer(modifier = Modifier.height(20.dp))
-                DarkModeToggleScreen( isDarkTheme = isDarkTheme,
+                Spacer(modifier = Modifier.height(50.dp))
+                DarkModeToggle( isDarkTheme = isDarkTheme,
                     changeAppTheme = changeAppTheme)
             }
         }
     }
 
 
-@SuppressLint("UseCompatLoadingForDrawables")
-@Composable
-fun DarkModeToggleScreen(  isDarkTheme: Boolean,
-                           changeAppTheme: () -> Unit) {
-         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(16.dp)
-                .wrapContentSize()
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            Text(
-                text = "Dark Mode",
-                modifier = Modifier.padding(bottom = 16.dp),
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onBackground
-            )
-            Spacer(modifier = Modifier.width(20.dp))
-            Switch(
-                checked = isDarkTheme,
-                onCheckedChange = {changeAppTheme()  },
-                modifier = Modifier.padding(bottom = 16.dp),thumbContent = {
-                    Icon(
-                        painter = if (isDarkTheme) painterResource(id = R.drawable.moon_icon) else painterResource(id = R.drawable.sun_icon) ,
-                        contentDescription = if (isDarkTheme) "Dark Theme" else "Light Theme",
-                        modifier = Modifier.size(24.dp)
-                    )
-                },
-                colors = SwitchDefaults.colors(
-                    checkedThumbColor = colorResource(id = R.color.hint_color),
-                    uncheckedThumbColor = colorResource(id = R.color.brand_color)
-                )
-            )
-        }
 
-    }
 
 
 
