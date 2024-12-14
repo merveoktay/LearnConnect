@@ -25,7 +25,7 @@ interface CourseDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUserCourse(userCourse: UserCourse)
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertUserFavoriteCourse(userFavoriteCourse: UserFavoriteCourse)
 
     @Query("SELECT * FROM courses WHERE course_type_id = :courseTypeId")
@@ -58,8 +58,18 @@ interface CourseDao {
     )
     suspend fun getUserCourses(userId: Int): List<Course>
 
-    @Query("SELECT * FROM user_favorite_courses WHERE user_id = :userId")
-    suspend fun getUserFavoriteCourses(userId: Int): List<UserFavoriteCourse>
+    @Query(
+        """
+        SELECT c.* 
+        FROM user_favorite_courses uc
+        INNER JOIN courses c ON uc.course_id = c.id
+        WHERE uc.user_id = :userId
+        """
+    )
+    suspend fun getUserFavoriteCourses(userId: Int): List<Course>
+
+    @Query("SELECT COUNT(*) FROM user_favorite_courses WHERE user_id = :userId AND course_id = :courseId")
+    suspend fun isUserFavorite(userId: Int, courseId: Int): Boolean
 
     @Query("SELECT COUNT(*) FROM user_courses WHERE user_id = :userId AND course_id = :courseId")
     suspend fun isUserEnrolled(userId: Int, courseId: Int): Boolean

@@ -52,8 +52,8 @@ import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.models.Video
 import com.example.learnconnect.viewModels.CourseViewModel
-import androidx.compose.ui.res.colorResource
 import androidx.core.content.ContextCompat
+import com.example.learnconnect.ui.components.PlayIconWithCircle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -217,33 +217,6 @@ fun VideoCard(
             },
             title = { Text("Enrollment Required") },
             text = { Text("To watch the course video, you need to enroll first.") }
-        )
-    }
-}
-@Composable
-fun PlayIconWithCircle() {
-    val context = LocalContext.current
-
-    val brandColor = remember {
-        Color(ContextCompat.getColor(context, R.color.brand_color))
-    }
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = Modifier
-            .size(64.dp)
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            drawCircle(
-                color = brandColor.copy(alpha = 0.7f),
-                style = Stroke(width = 4.dp.toPx())
-            )
-        }
-
-        Icon(
-            imageVector = Icons.Default.PlayArrow,
-            contentDescription = "Play Icon",
-            tint = brandColor.copy(alpha = 0.7f),
-            modifier = Modifier.size(48.dp)
         )
     }
 }

@@ -6,6 +6,7 @@ import com.example.learnconnect.initialize.CourseCategoryProvider
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
 import com.example.learnconnect.models.UserCourse
+import com.example.learnconnect.models.UserFavoriteCourse
 import com.example.learnconnect.models.Video
 import javax.inject.Inject
 
@@ -58,5 +59,15 @@ class CourseRepository @Inject constructor(private val courseDao: CourseDao,
     suspend fun getVideoById(videoId: Int): Video {
         return courseDao.getVideoById(videoId)
     }
-
+    suspend fun saveUserFavoriteCourse( userId: Int,courseId: Int) {
+        val userFavoriteCourse= UserFavoriteCourse(user_id = userId, course_id = courseId)
+        return courseDao.insertUserFavoriteCourse(userFavoriteCourse =userFavoriteCourse)
+    }
+    suspend fun isUserFavorite(userId: Int, courseId: Int): Boolean {
+        return courseDao.isUserFavorite(userId, courseId)
+    }
+    suspend fun getUserFavoriteCourses(userId:Int): List<Course> {
+        Log.d("course", courseDao.getUserCourses(userId).toString())
+        return courseDao.getUserFavoriteCourses(userId)
+    }
 }

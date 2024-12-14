@@ -64,7 +64,8 @@ fun AppNavHost( isDarkTheme: Boolean,
         composable("favorite") {
             val courseViewModel: CourseViewModel = hiltViewModel()
             FavoriteScreen(
-                onNavigateToCourses = { navController.navigate("courses") },
+                onNavigateToCourse = { courseId ->
+                    navController.navigate("course/$courseId")},
                 onNavigateToProfile = { navController.navigate("profile") },
                 courseViewModel = courseViewModel
             )

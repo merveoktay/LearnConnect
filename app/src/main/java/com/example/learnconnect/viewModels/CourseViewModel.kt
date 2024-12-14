@@ -1,14 +1,10 @@
 package com.example.learnconnect.viewModels
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
-import com.example.learnconnect.models.UserCourse
 import com.example.learnconnect.models.Video
 import com.example.learnconnect.repositories.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,8 +23,11 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     private val _courses = MutableStateFlow<List<Course>>(emptyList())
     val courses: StateFlow<List<Course>> get() = _courses
 
-    private val _usercourses = MutableStateFlow<List<Course>>(emptyList())
-    val usercourses: StateFlow<List<Course>> get() = _usercourses
+    private val _userCourses = MutableStateFlow<List<Course>>(emptyList())
+    val userCourses: StateFlow<List<Course>> get() = _userCourses
+
+    private val _userFavoriteCourses = MutableStateFlow<List<Course>>(emptyList())
+    val userFavoriteCourses: StateFlow<List<Course>> get() = _userFavoriteCourses
 
     private val _course = MutableStateFlow<Course>(Course(0,"","",0))
     val course: StateFlow<Course> = _course
@@ -41,6 +40,9 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _isEnrolled = MutableStateFlow<Boolean>(false)
     val isEnrolled: StateFlow<Boolean> get() = _isEnrolled
+
+    private val _isFavorite = MutableStateFlow<Boolean>(false)
+    val isFavorite: StateFlow<Boolean> get() = _isFavorite
 
     private val _filteredVideos = MutableStateFlow<List<Video>>(emptyList())
     val filteredVideos: StateFlow<List<Video>> get() = _filteredVideos
@@ -129,9 +131,21 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
         viewModelScope.launch {
             try {
                 val fetchedCourses = courseRepository.getUserCourses(userId)
-                _usercourses.value=fetchedCourses
+                _userCourses.value=fetchedCourses
             } catch (e: Exception) {
                 Log.e("CourseViewModel", "Error fetching user courses: ${e.message}")
+            }
+        }
+
+
+    }
+    fun getUserFavoriteCourses(userId: Int){
+        viewModelScope.launch {
+            try {
+                val fetchedCourses = courseRepository.getUserFavoriteCourses(userId)
+                _userFavoriteCourses.value=fetchedCourses
+            } catch (e: Exception) {
+                Log.e("CourseViewModel", "Error fetching user favorite courses: ${e.message}")
             }
         }
 
@@ -158,6 +172,26 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
         }
         Log.d("User saved",courseId.toString())
 
+    }
+    fun saveUserFavoriteCourse( userId: Int,courseId: Int) {
+        viewModelScope.launch {
+            try {
+                courseRepository.saveUserFavoriteCourse(userId, courseId)
+                _isFavorite.value=true
+
+            } catch (e: Exception) {
+                _isFavorite.value=false
+            }
+        }
+        Log.d("User Favorite saved",courseId.toString())
+
+    }
+
+    fun isUserFavorite(userId: Int, courseId: Int){
+        viewModelScope.launch {
+            _isFavorite.value = courseRepository.isUserFavorite(userId, courseId)
+
+        }
     }
 
     fun isUserEnrolled(userId: Int, courseId: Int){

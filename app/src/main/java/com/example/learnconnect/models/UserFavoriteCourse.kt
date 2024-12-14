@@ -22,7 +22,8 @@ import androidx.room.PrimaryKey
     ]
 )
 data class UserFavoriteCourse(
-    @PrimaryKey (autoGenerate = true) val id: Int,
+    @PrimaryKey (autoGenerate = true)
+    val id: Int? =null,
     val user_id: Int,
     val course_id: Int
 )
