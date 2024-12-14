@@ -105,20 +105,16 @@ fun CoursesContent(
         ) {
 
             items(userCourses) { userCourse ->
-                val currentCourseId = userCourse.course_id
+                val currentCourseId = userCourse.id
                 Log.d("UserCourse", currentCourseId.toString())
 
-                LaunchedEffect(currentCourseId) {
-                    courseViewModel.getCourse(currentCourseId)
-                }
 
-                val currentCourse = courseViewModel.course.collectAsState()
-                Log.d("UserCourseName", course.name ?: "")
+                Log.d("UserCourseName", userCourse.name ?: "")
 
                 CoursesVideoCard(
-                    imageUrl = currentCourse.value.course_image,
-                    courseName = currentCourse.value.name,
-                    courseId = currentCourse.value.id,
+                    imageUrl = userCourse.course_image,
+                    courseName = userCourse.name,
+                    courseId = userCourse.id,
                     onNavigateToCourse
                 )
             }

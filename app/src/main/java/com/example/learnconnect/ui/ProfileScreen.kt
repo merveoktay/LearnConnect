@@ -176,12 +176,11 @@ fun ProfileContent(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(60.dp), // Ensures it doesn't overflow vertically
-                    contentAlignment = Alignment.Center // Centers content horizontally within the box
+                        .height(60.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = user.username.uppercase(Locale.getDefault()),
-
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground

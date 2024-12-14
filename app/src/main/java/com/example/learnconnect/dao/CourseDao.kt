@@ -48,8 +48,15 @@ interface CourseDao {
     @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
     suspend fun getUserByCredentials(email: String, password: String): User?
 
-    @Query("SELECT * FROM user_courses WHERE user_id = :userId")
-    suspend fun getUserCourses(userId: Int): List<UserCourse>
+    @Query(
+        """
+        SELECT c.* 
+        FROM user_courses uc
+        INNER JOIN courses c ON uc.course_id = c.id
+        WHERE uc.user_id = :userId
+        """
+    )
+    suspend fun getUserCourses(userId: Int): List<Course>
 
     @Query("SELECT * FROM user_favorite_courses WHERE user_id = :userId")
     suspend fun getUserFavoriteCourses(userId: Int): List<UserFavoriteCourse>

@@ -108,7 +108,6 @@ fun AppNavHost( isDarkTheme: Boolean,
                 onNavigateToVideoPlayer = { videoId ->
                     navController.navigate("video/$videoId")
                 },
-                loginViewModel = loginViewModel,
                 courseId = courseId,
                 onFavoriteClick = { /* Favorite işlemini burada tanımlayın */ },
                 navController = navController,

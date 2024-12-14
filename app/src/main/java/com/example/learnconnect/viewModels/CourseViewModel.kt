@@ -27,8 +27,8 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     private val _courses = MutableStateFlow<List<Course>>(emptyList())
     val courses: StateFlow<List<Course>> get() = _courses
 
-    private val _usercourses = MutableStateFlow<List<UserCourse>>(emptyList())
-    val usercourses: StateFlow<List<UserCourse>> get() = _usercourses
+    private val _usercourses = MutableStateFlow<List<Course>>(emptyList())
+    val usercourses: StateFlow<List<Course>> get() = _usercourses
 
     private val _course = MutableStateFlow<Course>(Course(0,"","",0))
     val course: StateFlow<Course> = _course

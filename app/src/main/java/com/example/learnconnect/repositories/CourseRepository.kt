@@ -37,7 +37,7 @@ class CourseRepository @Inject constructor(private val courseDao: CourseDao,
         Log.d("video", courseDao.getAllVideos().toString())
         return courseDao.getAllVideos()
     }
-    suspend fun getUserCourses(userId:Int): List<UserCourse> {
+    suspend fun getUserCourses(userId:Int): List<Course> {
         Log.d("course", courseDao.getUserCourses(userId).toString())
         return courseDao.getUserCourses(userId)
     }
