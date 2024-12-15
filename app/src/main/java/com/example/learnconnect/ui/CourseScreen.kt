@@ -55,6 +55,7 @@ import com.example.learnconnect.models.Video
 import com.example.learnconnect.viewModels.CourseViewModel
 import androidx.core.content.ContextCompat
 import com.example.learnconnect.ui.components.PlayIconWithCircle
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -64,15 +65,16 @@ fun CourseScreen(
     navController: NavController,
     courseId: Int,
 ) {
+    val videoViewModel:VideoViewModel= hiltViewModel()
     Log.d("Course Id", courseId.toString())
     val context = LocalContext.current
-    val videos by viewModel.videos.collectAsState()
+    val videos by videoViewModel.videos.collectAsState()
     val course by viewModel.course.collectAsState()
     val userId = PreferencesManager.getUserId(context)
     val isUserEnrolled by viewModel.isEnrolled.collectAsState()
     val isFavorite by viewModel.isFavorite.collectAsState()
     LaunchedEffect(courseId) {
-        viewModel.loadVideos()
+        videoViewModel.loadVideos()
         viewModel.getCourse(courseId)
         viewModel.isUserEnrolled(userId, courseId)
         viewModel.isUserFavorite(userId, courseId)
@@ -104,13 +106,12 @@ fun CourseScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 16.dp), // İkonların yatayda düzenlenmesi için padding
-                        horizontalArrangement = Arrangement.End, // İkonları sağa hizalamak için
-                        verticalAlignment = Alignment.CenterVertically // İkonları dikeyde ortalamak için
+                            .padding(horizontal = 16.dp),
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         if (!isUserEnrolled) {
                             IconButton(onClick = {
-                                Log.d("CourseScreen save course", courseId.toString())
                                 viewModel.saveUserCourse(userId = userId, courseId = courseId)
                             }) {
                                 Icon(
@@ -120,6 +121,7 @@ fun CourseScreen(
                                     modifier = Modifier.size(60.dp)
                                 )
                             }
+
                         }
 
 
@@ -200,7 +202,7 @@ fun VideoCard(
                     PreferencesManager.clearVideoLink(context)
                     PreferencesManager.saveVideoLink(context = context, video.url)
                     Log.d("Video Card içinde video url ", video.id.toString())
-                    onNavigateToVideoPlayer(video.id)
+                    video.id?.let { onNavigateToVideoPlayer(it) }
                 } else {
                     showDialog = true
                 }

@@ -25,7 +25,7 @@ import com.example.learnconnect.utils.CacheManager
 import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.utils.PreferencesManager.getVideoProgress
 import com.example.learnconnect.utils.PreferencesManager.saveVideoProgress
-import com.example.learnconnect.viewModels.CourseViewModel
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,10 +33,10 @@ import com.example.learnconnect.viewModels.CourseViewModel
 fun VideoPlayerScreen(
     videoId: Int,
     navController: NavController,
-    courseViewModel: CourseViewModel
+    videoViewModel: VideoViewModel
 ) {
     LaunchedEffect(Unit) {
-        courseViewModel.getVideoDetails(videoId = videoId)
+        videoViewModel.getVideoDetails(videoId = videoId)
     }
 
     val context = LocalContext.current
@@ -83,7 +83,7 @@ fun VideoPlayerScreen(
     val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
         .createMediaSource(mediaItem)
 
-    val video by courseViewModel.video.collectAsState()
+    val video by videoViewModel.video.collectAsState()
     val progress = getVideoProgress(context, videoId)
 
     Log.d("Video Progress", "Video ID: $videoId, Progress: $progress")
@@ -91,7 +91,7 @@ fun VideoPlayerScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = video?.title ?: "", color = MaterialTheme.colorScheme.onSurface) },
+                title = { Text(text = video.title, color = MaterialTheme.colorScheme.onSurface) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = MaterialTheme.colorScheme.onSurface)

@@ -16,8 +16,10 @@ import androidx.room.PrimaryKey
     ]
 )
 data class Video(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true) val id:Int? =null,
     val title: String,
     val url: String,
-    val course_id: Int
+    val course_id: Int,
+    val duration:Int,
+    val file_path:String?
 )

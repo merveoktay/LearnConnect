@@ -17,6 +17,7 @@ import com.example.learnconnect.ui.RegisterScreen
 import com.example.learnconnect.ui.SplashScreen
 import com.example.learnconnect.ui.VideoPlayerScreen
 import com.example.learnconnect.viewModels.CourseViewModel
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
 fun AppNavHost( isDarkTheme: Boolean,
@@ -96,9 +97,9 @@ fun AppNavHost( isDarkTheme: Boolean,
         composable(
             route = "video/{videoId}"
         ) { backStackEntry ->
-            val courseViewModel: CourseViewModel = hiltViewModel()
+            val videoViewModel: VideoViewModel = hiltViewModel()
             val videoId = backStackEntry.arguments?.getString("videoId")?.toIntOrNull() ?: 0
-            VideoPlayerScreen(videoId = videoId, navController = navController,courseViewModel)
+            VideoPlayerScreen(videoId = videoId, navController = navController,videoViewModel)
         }
         composable("course/{courseId}") { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull() ?: 0

@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.learnconnect.models.Course
 import com.example.learnconnect.models.CourseType
-import com.example.learnconnect.models.Video
 import com.example.learnconnect.repositories.CourseRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,12 +31,6 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     private val _course = MutableStateFlow<Course>(Course(0, "", "", 0))
     val course: StateFlow<Course> = _course
 
-    private val _videos = MutableStateFlow<List<Video>>(emptyList())
-    val videos: StateFlow<List<Video>> get() = _videos
-
-    private val _video = MutableStateFlow<Video>(Video(0, "", "", 0))
-    val video: StateFlow<Video> get() = _video
-
     private val _isEnrolled = MutableStateFlow<Boolean>(false)
     val isEnrolled: StateFlow<Boolean> get() = _isEnrolled
 
@@ -46,11 +39,6 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     private val _isFavoriteDeleted = MutableStateFlow<Boolean>(false)
     val isFavoriteDeleted: StateFlow<Boolean> get() = _isFavoriteDeleted
-
-
-    private val _filteredVideos = MutableStateFlow<List<Video>>(emptyList())
-    val filteredVideos: StateFlow<List<Video>> get() = _filteredVideos
-
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> get() = _searchQuery
 
@@ -58,11 +46,9 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
     private val _filteredCourses = MutableStateFlow<List<Course>>(emptyList())
     val filteredCourses: StateFlow<List<Course>> get() = _filteredCourses
 
-
     init {
         loadCategories()
         loadCourses()
-        loadVideos()
     }
 
     fun loadCategories() {
@@ -89,18 +75,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
         }
     }
 
-    fun loadVideos() {
-        viewModelScope.launch {
-            try {
-                courseRepository.initializeAllVideo()
-                val allVideos = courseRepository.getVideos()
-                _videos.value = allVideos
-                filterVideos()
-            } catch (e: Exception) {
-                Log.e("VideoViewModel", "Error loading videos: ${e.message}")
-            }
-        }
-    }
+
 
     fun updateSearchQuery(query: String) {
         _searchQuery.value = query
@@ -118,12 +93,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
         return _courses.value.filter { it.course_type_id == categoryId }
     }
 
-    fun getVideosForCourse(courseId: Int) {
-        viewModelScope.launch {
-            val videoList = courseRepository.getVideosByCourseId(courseId)
-            _videos.value = videoList
-        }
-    }
+
 
     fun getCourse(courseId: Int) {
         viewModelScope.launch {
@@ -158,13 +128,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
 
     }
 
-    private fun filterVideos() {
-        val query = searchQuery.value
-        val videos = _videos.value
-        _filteredVideos.value = videos.filter { video ->
-            video.title.contains(query, ignoreCase = true)
-        }
-    }
+
 
     fun saveUserCourse(userId: Int, courseId: Int) {
         viewModelScope.launch {
@@ -208,12 +172,7 @@ class CourseViewModel @Inject constructor(private val courseRepository: CourseRe
         }
     }
 
-    fun getVideoDetails(videoId: Int) {
-        viewModelScope.launch {
-            val fetchedVideo = courseRepository.getVideoById(videoId)
-            _video.value = fetchedVideo
-        }
-    }
+
 
     fun removeCourseFromFavorites(userId: Int, courseId: Int) {
         viewModelScope.launch {
