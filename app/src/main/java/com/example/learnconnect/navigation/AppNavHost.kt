@@ -2,11 +2,9 @@ package com.example.learnconnect.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.learnconnect.ui.CourseScreen
 import com.example.learnconnect.ui.CoursesScreen
 import com.example.learnconnect.ui.FavoriteScreen
@@ -19,9 +17,11 @@ import com.example.learnconnect.ui.RegisterScreen
 import com.example.learnconnect.ui.SplashScreen
 import com.example.learnconnect.ui.VideoPlayerScreen
 import com.example.learnconnect.viewModels.CourseViewModel
+import com.example.learnconnect.viewModels.VideoViewModel
 
 @Composable
-fun AppNavHost() {
+fun AppNavHost( isDarkTheme: Boolean,
+                changeAppTheme: () -> Unit) {
     val navController = rememberNavController()
 
     NavHost(
@@ -65,7 +65,8 @@ fun AppNavHost() {
         composable("favorite") {
             val courseViewModel: CourseViewModel = hiltViewModel()
             FavoriteScreen(
-                onNavigateToCourses = { navController.navigate("courses") },
+                onNavigateToCourse = { courseId ->
+                    navController.navigate("course/$courseId")},
                 onNavigateToProfile = { navController.navigate("profile") },
                 courseViewModel = courseViewModel
             )
@@ -83,7 +84,11 @@ fun AppNavHost() {
             )
         }
         composable("profile") {
+            val loginViewModel: LoginViewModel = hiltViewModel()
             ProfileScreen(
+                loginViewModel=loginViewModel,
+                isDarkTheme = isDarkTheme,
+                changeAppTheme = changeAppTheme,
                 onNavigateToHome = { navController.navigate("home") },
                 onNavigateToFavorite = { navController.navigate("favorite") },
                 onNavigateToCourses = { navController.navigate("courses") }
@@ -92,22 +97,19 @@ fun AppNavHost() {
         composable(
             route = "video/{videoId}"
         ) { backStackEntry ->
-            val courseViewModel: CourseViewModel = hiltViewModel()
+            val videoViewModel: VideoViewModel = hiltViewModel()
             val videoId = backStackEntry.arguments?.getString("videoId")?.toIntOrNull() ?: 0
-            VideoPlayerScreen(videoId = videoId, navController = navController,courseViewModel)
+            VideoPlayerScreen(videoId = videoId, navController = navController,videoViewModel)
         }
         composable("course/{courseId}") { backStackEntry ->
             val courseId = backStackEntry.arguments?.getString("courseId")?.toIntOrNull() ?: 0
             val courseViewModel: CourseViewModel = hiltViewModel()
-            val loginViewModel: LoginViewModel = hiltViewModel()
             CourseScreen(
                 viewModel = courseViewModel,
                 onNavigateToVideoPlayer = { videoId ->
                     navController.navigate("video/$videoId")
                 },
-                loginViewModel = loginViewModel,
                 courseId = courseId,
-                onFavoriteClick = { /* Favorite işlemini burada tanımlayın */ },
                 navController = navController,
             )
         }

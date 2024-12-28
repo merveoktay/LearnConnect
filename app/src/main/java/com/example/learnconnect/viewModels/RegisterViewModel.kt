@@ -33,16 +33,26 @@ class RegisterViewModel @Inject constructor(
         _password.value = newPassword
     }
 
+
     fun register(
+        username: String,
+        email: String,
+        password: String,
         onSuccess: () -> Unit,
-        onError: (String) -> Unit
+        onError: () -> Unit
     ) {
         viewModelScope.launch {
-            val result = repository.registerUser(username.value,email.value, password.value)
+            val existingUser = repository.findUserByEmailOrUsername(email)
+            if (existingUser != null) {
+                onError()
+                return@launch
+            }
+
+            val result = repository.registerUser(username,email, password)
             if (result) {
                 onSuccess()
             } else {
-                onError("User already exists or invalid input")
+                onError()
             }
         }
     }
