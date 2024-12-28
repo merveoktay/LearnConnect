@@ -67,9 +67,6 @@ Bu projeyi kendi cihazınızda çalıştırmak için aşağıdaki adımları izl
 
 ---
 
-## Gelecek Güncellemeler
-- Kurs detayları sayfası.
-- Kullanıcı bildirimleri.
 
 
 
