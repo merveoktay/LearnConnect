@@ -1,9 +1,11 @@
 package com.example.learnconnect.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,12 +17,16 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +47,26 @@ import com.example.learnconnect.R
 import com.example.learnconnect.viewModels.RegisterViewModel
 
 @Composable
-fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel = hiltViewModel()) {
+fun RegisterScreen(onNavigateToLogin: () -> Unit,viewModel: RegisterViewModel = hiltViewModel() ) {
+
+
+    Scaffold(
+        topBar = { RegisterTopBar(onNavigateToLogin) },
+        bottomBar = {},
+        content = { paddingValues ->
+            RegisterContent(
+                onNavigateToLogin = onNavigateToLogin,
+                viewModel = viewModel,
+                modifier = Modifier.padding(paddingValues) // paddingValues ile içeriği düzenler
+            )
+        }
+    )
+
+}
+@Composable
+fun RegisterContent(onNavigateToLogin: () -> Unit,viewModel:RegisterViewModel, modifier: Modifier = Modifier,
+)
+{
     var username by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
@@ -51,98 +76,63 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
     var showErrorDialog by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf("") }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-
-        IconButton(onClick = {
-
-        }) {
-
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                contentDescription = "Back",
-                tint = MaterialTheme.colorScheme.onSurface,
-                modifier = Modifier
-                    .size(60.dp)
-                    .align(Alignment.TopStart)
-                    .padding(top = 15.dp)
-            )
-        }
-
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .padding(top = 60.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier.fillMaxHeight().padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-
-            Text(
-                text = "Register to Learn Connect",
-                style = TextStyle(
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = MaterialTheme.colorScheme.onSurface
-                ),
-                modifier = Modifier
-                    .align(Alignment.Start)
-            )
             Spacer(modifier = Modifier.height(100.dp))
 
-            OutlinedTextField(
-                value = username,
-                onValueChange = { newUsername ->
-                    username = newUsername
-                    viewModel.onUsernameChange(username)
-                },
-                label = { Text("Full Name", color = MaterialTheme.colorScheme.onSurface) },
-                modifier = Modifier
-                    .fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-            )
+                    OutlinedTextField(
+                        value = username,
+                        onValueChange = { newUsername ->
+                            username = newUsername
+                            viewModel.onUsernameChange(username)
+                        },
+                        label = { Text("Full Name", color = MaterialTheme.colorScheme.onSurface) },
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp),
+                    )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = email,
-                onValueChange = { newEmail ->
-                    email = newEmail
-                    viewModel.onEmailChange(newEmail)
-                },
-                label = { Text("Email", color = MaterialTheme.colorScheme.onSurface) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp)
-            )
+                    OutlinedTextField(
+                        value = email,
+                        onValueChange = { newEmail ->
+                            email = newEmail
+                            viewModel.onEmailChange(newEmail)
+                        },
+                        label = { Text("Email", color = MaterialTheme.colorScheme.onSurface) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp)
+                    )
             Spacer(modifier = Modifier.height(16.dp))
 
-            OutlinedTextField(
-                value = password,
-                onValueChange = { newPassword ->
-                    password = newPassword
-                    viewModel.onPasswordChange(newPassword)
-                },
-                label = { Text("Password", color = MaterialTheme.colorScheme.onSurface) },
-                modifier = Modifier.fillMaxWidth(),
-                singleLine = true,
-                shape = RoundedCornerShape(8.dp),
-                visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                trailingIcon = {
-                    IconButton(
-                        onClick = { isPasswordVisible = !isPasswordVisible }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
-                            contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
-                        )
-                    }
-                }
-            )
+                    OutlinedTextField(
+                        value = password,
+                        onValueChange = { newPassword ->
+                            password = newPassword
+                            viewModel.onPasswordChange(newPassword)
+                        },
+                        label = { Text("Password", color = MaterialTheme.colorScheme.onSurface) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true,
+                        shape = RoundedCornerShape(8.dp),
+                        visualTransformation = if (isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = {
+                            IconButton(
+                                onClick = { isPasswordVisible = !isPasswordVisible }
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = if (isPasswordVisible) R.drawable.open_eye else R.drawable.closed_eye),
+                                    contentDescription = if (isPasswordVisible) "Hide password" else "Show password"
+                                )
+                            }
+                        }
+                    )
 
-            Spacer(modifier = Modifier.height(75.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             if (username.isNotEmpty() && email.isNotEmpty() && password.isNotEmpty()) {
                 buttonColor = MaterialTheme.colorScheme.primary
                 clickable = true
@@ -177,7 +167,7 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
                     fontWeight = FontWeight.Bold
                 )
             }
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(16.dp))
             Text(text = "By registering you agree to ", color = MaterialTheme.colorScheme.onBackground)
             Text(
                 text = "Terms & Conditions",
@@ -196,7 +186,6 @@ fun RegisterScreen(onNavigateToLogin: () -> Unit, viewModel: RegisterViewModel =
             )
             Text(text = "of the Learn Connect", color = MaterialTheme.colorScheme.onBackground)
         }
-    }
     if (showErrorDialog) {
         RegisterErrorDialog(errorMessage = errorMessage) {
             showErrorDialog = false
@@ -221,3 +210,28 @@ fun RegisterErrorDialog(errorMessage: String, onDismiss: () -> Unit) {
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun RegisterTopBar(onNavigateToProfile: () -> Unit) {
+    TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = MaterialTheme.colorScheme.secondary
+        ),
+        title = {
+            Text(
+                text = "Register to Learn Connect",
+                color = MaterialTheme.colorScheme.onSecondary)
+        },
+        navigationIcon = {
+            IconButton(onClick = { onNavigateToProfile() }) {
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onSecondary,
+                    modifier = Modifier.size(60.dp)
+                )
+            }
+        },
+        actions = {}
+    )
+}

@@ -102,7 +102,7 @@ fun ProfileTopBar( ) {
 
 @Composable
 fun ProfileBottomBar(onNavigateToHome: () -> Unit, onNavigateToCourses: () -> Unit) {
-        BottomAppBar(
+        BottomAppBar(modifier = Modifier.fillMaxWidth().height(65.dp),
             containerColor = MaterialTheme.colorScheme.secondary
         ) {
             NavigationBar(

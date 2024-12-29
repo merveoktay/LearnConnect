@@ -1,6 +1,7 @@
 package com.example.learnconnect.ui
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -60,7 +61,7 @@ fun CourseScreen(
     navController: NavController,
     courseId: Int,
 ) {
-    val videoViewModel:VideoViewModel= hiltViewModel()
+    val videoViewModel: VideoViewModel = hiltViewModel()
     Log.d("Course Id", courseId.toString())
     val context = LocalContext.current
     val videos by videoViewModel.videos.collectAsState()
@@ -78,13 +79,13 @@ fun CourseScreen(
     course.let { Log.d("Course Data", it.name) }
 
     Scaffold(
-        containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(colors = TopAppBarDefaults.topAppBarColors(
-                containerColor = MaterialTheme.colorScheme.secondary),
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
                 title = {
                     Text(
-                        text = course.name,
+                        text = "My Favorite Courses",
                         color = MaterialTheme.colorScheme.onSecondary
                     )
                 },
@@ -155,7 +156,8 @@ fun CourseScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(16.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             LazyColumn(

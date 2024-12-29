@@ -1,6 +1,7 @@
 package com.example.learnconnect.ui
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -64,8 +65,7 @@ fun FavoriteCourseTopBar(onNavigateToProfile: () -> Unit) {
         title = {
             Text(
                 text = "My Favorite Courses",
-                color = MaterialTheme.colorScheme.onSecondary
-            )
+                color = MaterialTheme.colorScheme.onSecondary)
         },
         navigationIcon = {
             IconButton(onClick = { onNavigateToProfile() }) {
@@ -98,7 +98,7 @@ fun FavoriteCourseContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp)
+            .padding(16.dp).background(MaterialTheme.colorScheme.background)
     ) {
         LazyColumn(
             modifier = Modifier
