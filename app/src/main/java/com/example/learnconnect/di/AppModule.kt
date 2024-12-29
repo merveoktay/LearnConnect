@@ -5,6 +5,7 @@ import androidx.room.Room
 import com.example.learnconnect.configs.AppDatabase
 import com.example.learnconnect.dao.CourseDao
 import com.example.learnconnect.dao.UserDao
+import com.example.learnconnect.dao.VideoDao
 import com.example.learnconnect.initialize.CourseCategoryProvider import com.example.learnconnect.repositories.UserRepository
 import dagger.Module
 import dagger.Provides
@@ -30,6 +31,11 @@ object AppModule {
     fun provideCourseDao(database: AppDatabase): CourseDao {
         return database.courseDao()
     }
+    @Provides
+    @Singleton
+    fun provideVideoDao(database: AppDatabase): VideoDao {
+        return database.videoDao()
+    }
 
 
     @Provides
@@ -41,8 +47,8 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideCourseCategoryProvider(courseDao: CourseDao): CourseCategoryProvider {
-        return CourseCategoryProvider(courseDao)
+    fun provideCourseCategoryProvider(courseDao: CourseDao,videoDao:VideoDao): CourseCategoryProvider {
+        return CourseCategoryProvider(courseDao,videoDao)
     }
 
     @Provides

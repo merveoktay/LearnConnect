@@ -25,6 +25,7 @@ abstract class AppDatabase : RoomDatabase(){
     abstract fun videoDao():VideoDao
     abstract fun userDao(): UserDao
     abstract fun courseDao(): CourseDao
+
     companion object {
         val MIGRATION_1_2 = object : Migration(1, 2) {
             override fun migrate(database: SupportSQLiteDatabase) {

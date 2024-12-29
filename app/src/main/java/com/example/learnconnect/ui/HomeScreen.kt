@@ -1,6 +1,7 @@
 package com.example.learnconnect.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -116,7 +117,7 @@ fun HomeContent(
     Column(
             modifier = modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(16.dp).background(MaterialTheme.colorScheme.background)
 
         ) {
             LazyRow(
@@ -162,6 +163,7 @@ fun HomeContent(
 @Composable
 fun HomeBottomBar(onNavigateToProfile: () -> Unit, onNavigateToCourses: () -> Unit) {
         BottomAppBar(
+            modifier = Modifier.fillMaxWidth().height(65.dp),
             containerColor = MaterialTheme.colorScheme.secondary
         ) {
             NavigationBar(
