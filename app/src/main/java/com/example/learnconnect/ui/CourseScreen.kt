@@ -35,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,6 +52,7 @@ import coil.compose.AsyncImage
 import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.models.Video
+import com.example.learnconnect.ui.components.DownloadIcon
 import com.example.learnconnect.viewModels.CourseViewModel
 import com.example.learnconnect.ui.components.PlayIconWithCircle
 import com.example.learnconnect.viewModels.VideoViewModel
@@ -194,6 +196,7 @@ fun VideoCard(
     onNavigateToVideoPlayer: (Int) -> Unit,
 ) {
     val context = LocalContext.current
+    var id by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
     Card(
@@ -206,7 +209,7 @@ fun VideoCard(
                     PreferencesManager.clearVideoLink(context)
                     PreferencesManager.saveVideoLink(context = context, video.url)
                     Log.d("Video Card içinde video url ", video.id.toString())
-                    video.id?.let { onNavigateToVideoPlayer(it) }
+                    id= video.id!!
                 } else {
                     showDialog = true
                 }
@@ -230,7 +233,14 @@ fun VideoCard(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        PlayIconWithCircle()
+                        PlayIconWithCircle(id = id, onNavigateToVideoPlayer = onNavigateToVideoPlayer)
+                    }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopEnd
+                    )
+                    {
+                        DownloadIcon()
                     }
                 }
             }

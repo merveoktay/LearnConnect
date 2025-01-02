@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -19,7 +20,7 @@ import androidx.core.content.ContextCompat
 import com.example.learnconnect.R
 
 @Composable
-fun PlayIconWithCircle() {
+fun PlayIconWithCircle(id:Int, onNavigateToVideoPlayer: (Int) -> Unit) {
     val context = LocalContext.current
 
     val brandColor = remember {
@@ -36,12 +37,13 @@ fun PlayIconWithCircle() {
                 style = Stroke(width = 4.dp.toPx())
             )
         }
-
-        Icon(
-            imageVector = Icons.Default.PlayArrow,
-            contentDescription = "Play Icon",
-            tint = brandColor.copy(alpha = 0.7f),
-            modifier = Modifier.size(48.dp)
-        )
+        IconButton(onClick = {  onNavigateToVideoPlayer(id)}) {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = "Play Icon",
+                tint = brandColor.copy(alpha = 0.7f),
+                modifier = Modifier.size(48.dp)
+            )
+        }
     }
 }
