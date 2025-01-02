@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -84,29 +86,22 @@ fun CourseScreen(
                 containerColor = MaterialTheme.colorScheme.secondary
             ),
                 title = {
-                    Text(
-                        text = "My Favorite Courses",
-                        color = MaterialTheme.colorScheme.onSecondary
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSecondary,
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
-                },
-                actions = {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.End,
+                        horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            text = course.name,
+                            color =  MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.widthIn(max = 200.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            
+                        )
+
                         if (!isUserEnrolled) {
                             IconButton(onClick = {
                                 viewModel.saveUserCourse(userId = userId, courseId = courseId)
@@ -148,6 +143,20 @@ fun CourseScreen(
                             )
                         }
                     }
+
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+                },
+                actions = {
+
                 }
             )
         }
