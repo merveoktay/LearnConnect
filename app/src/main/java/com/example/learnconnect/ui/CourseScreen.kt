@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +35,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -49,6 +52,7 @@ import coil.compose.AsyncImage
 import com.example.learnconnect.utils.PreferencesManager
 import com.example.learnconnect.R
 import com.example.learnconnect.models.Video
+import com.example.learnconnect.ui.components.DownloadIcon
 import com.example.learnconnect.viewModels.CourseViewModel
 import com.example.learnconnect.ui.components.PlayIconWithCircle
 import com.example.learnconnect.viewModels.VideoViewModel
@@ -84,29 +88,22 @@ fun CourseScreen(
                 containerColor = MaterialTheme.colorScheme.secondary
             ),
                 title = {
-                    Text(
-                        text = "My Favorite Courses",
-                        color = MaterialTheme.colorScheme.onSecondary
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSecondary,
-                            modifier = Modifier.size(60.dp)
-                        )
-                    }
-                },
-                actions = {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp),
-                        horizontalArrangement = Arrangement.End,
+                        horizontalArrangement = Arrangement.Start,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Text(
+                            text = course.name,
+                            color =  MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.widthIn(max = 200.dp),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            
+                        )
+
                         if (!isUserEnrolled) {
                             IconButton(onClick = {
                                 viewModel.saveUserCourse(userId = userId, courseId = courseId)
@@ -148,6 +145,20 @@ fun CourseScreen(
                             )
                         }
                     }
+
+                },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                            contentDescription = "Back",
+                            tint = MaterialTheme.colorScheme.onSecondary,
+                            modifier = Modifier.size(60.dp)
+                        )
+                    }
+                },
+                actions = {
+
                 }
             )
         }
@@ -185,6 +196,7 @@ fun VideoCard(
     onNavigateToVideoPlayer: (Int) -> Unit,
 ) {
     val context = LocalContext.current
+    var id by remember { mutableIntStateOf(0) }
     var showDialog by remember { mutableStateOf(false) }
 
     Card(
@@ -197,7 +209,7 @@ fun VideoCard(
                     PreferencesManager.clearVideoLink(context)
                     PreferencesManager.saveVideoLink(context = context, video.url)
                     Log.d("Video Card içinde video url ", video.id.toString())
-                    video.id?.let { onNavigateToVideoPlayer(it) }
+                    id= video.id!!
                 } else {
                     showDialog = true
                 }
@@ -221,7 +233,14 @@ fun VideoCard(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center
                     ) {
-                        PlayIconWithCircle()
+                        PlayIconWithCircle(id = id, onNavigateToVideoPlayer = onNavigateToVideoPlayer)
+                    }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopEnd
+                    )
+                    {
+                        DownloadIcon()
                     }
                 }
             }
