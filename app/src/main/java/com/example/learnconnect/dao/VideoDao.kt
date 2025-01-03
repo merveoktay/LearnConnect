@@ -20,6 +20,12 @@ interface VideoDao {
     @Query("UPDATE video_progress SET last_position = :lastPosition WHERE user_id = :userId AND video_id = :videoId")
     suspend fun saveCurrentPosition(userId:Int,videoId: Int,lastPosition:Long)
 
+    // Kullanıcının bir videodaki son pozisyonunu kaydet
+    @Query("UPDATE video_progress SET last_position = :lastPosition WHERE user_id = :userId AND video_id = :videoId")
+    suspend fun saveLastPosition(userId: Int, videoId: Int, lastPosition: Long)
+
+    @Query("UPDATE videos SET file_path=:downloadPath where id=:videoId AND course_id=:courseId")
+    suspend fun saveDownloadPath(courseId: Int,videoId: Int,downloadPath:String)
     @Query("UPDATE video_progress SET is_watched = 1 WHERE user_id = :userId AND video_id = :videoId")
     suspend fun updateVideoIsWatched(userId: Int,videoId: Int)
 
@@ -30,9 +36,7 @@ interface VideoDao {
     @Query("UPDATE video_progress SET is_watched = 1 WHERE user_id = :userId AND video_id = :videoId")
     suspend fun updateIsWatchedStatus(userId: Int, videoId: Int)
 
-    // Kullanıcının bir videodaki son pozisyonunu kaydet
-    @Query("UPDATE video_progress SET last_position = :lastPosition WHERE user_id = :userId AND video_id = :videoId")
-    suspend fun saveLastPosition(userId: Int, videoId: Int, lastPosition: Long)
+
 
     // Kullanıcının bir videodaki son pozisyonunu al
     @Query("SELECT last_position FROM video_progress WHERE user_id = :userId AND video_id = :videoId")
