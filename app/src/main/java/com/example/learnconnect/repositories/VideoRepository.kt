@@ -33,6 +33,9 @@ class VideoRepository @Inject constructor(private val videoDao: VideoDao,private
         videoDao.updateIsWatchedStatus(userId, videoId)
     }
 
+    suspend fun saveDownloadPath(courseId: Int,videoId: Int,downloadPath:String){
+        videoDao.saveDownloadPath(courseId,videoId,downloadPath)
+    }
     // Videonun son pozisyonunu kaydet
     suspend fun saveLastPosition(userId: Int, videoId: Int, lastPosition: Long) {
         videoDao.saveLastPosition(userId, videoId, lastPosition)
@@ -62,4 +65,6 @@ class VideoRepository @Inject constructor(private val videoDao: VideoDao,private
     suspend fun getAllProgressByUser(userId: Int): List<VideoProgress> {
         return videoDao.getAllProgressByUser(userId)
     }
+
+
 }

@@ -17,7 +17,8 @@ class VideoViewModel @Inject constructor(private val videoRepository: VideoRepos
     private val _videos = MutableStateFlow<List<Video>>(emptyList())
     val videos: StateFlow<List<Video>> get() = _videos
 
-    private val _video = MutableStateFlow<Video>(Video(0, "", "", 0,0,""))
+    private val _video = MutableStateFlow(Video(0, "", "", 0,0,""))
+
     val video: StateFlow<Video> get() = _video
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> get() = _searchQuery
@@ -37,12 +38,14 @@ class VideoViewModel @Inject constructor(private val videoRepository: VideoRepos
             }
         }
     }
+
     fun getVideosForCourse(courseId: Int) {
         viewModelScope.launch {
             val videoList = videoRepository.getVideosByCourseId(courseId)
             _videos.value = videoList
         }
     }
+
     private fun filterVideos() {
         val query = searchQuery.value
         val videos = _videos.value
@@ -50,10 +53,12 @@ class VideoViewModel @Inject constructor(private val videoRepository: VideoRepos
             video.title.contains(query, ignoreCase = true)
         }
     }
+
     fun getVideoDetails(videoId: Int) {
         viewModelScope.launch {
             val fetchedVideo = videoRepository.getVideoById(videoId)
             _video.value = fetchedVideo
         }
     }
+
 }
