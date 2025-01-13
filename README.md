@@ -4,24 +4,25 @@ LearnConnect, modern bir video tabanlı eğitim platformudur. Kullanıcıların
 
 ##  Light Theme Ekran Görüntüleri
 <p float="left">
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/SplashScreen.png width="28%" />
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LoginScreen%20Entry.png width="28%" />
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/RegisterScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeSplashScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeLoginScreen%20Entry.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeRegisterScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeHomeScreen.png width="28%"  />
-   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeMyCourseScreen.png  width="28%" />
-    <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeProfileScreen.png width="28%" />
+   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeMyCoursesScreen.png  width="28%" />
+   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeCourseScreen.png  width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/LightThemeProfileScreen.png width="28%" />
+ 
   
 </p>
 
 ## Dark Theme Ekran Görüntüleri
 <p float="left">
-    <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeSplashScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeSplashScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeLoginScreen.png  width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeRegisterScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeHomeScreen.png width="28%"  />
-  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeMyCourseScreen.png width="28%"  />
-    <img src=hhttps://github.com/merveoktay/LearnConnect/blob/Video/LightThemeCourseScreen.png width="28%" />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeMyCoursesScreen.png width="28%"  />
+  <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeCourseScreen.png width="28%" />
   <img src=https://github.com/merveoktay/LearnConnect/blob/master/DarkThemeProfileScreen.png  width="28%" />
 </p>
 ---
